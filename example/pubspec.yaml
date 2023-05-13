@@ -1,0 +1,9 @@
+name: dart_package_template_example
+description: Example command line application of dart_package_template package.
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  dart_package_template:
+    path: ../
