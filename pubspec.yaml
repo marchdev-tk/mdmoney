@@ -1,14 +1,16 @@
-name: dart_package_template
+name: mdmoney
 version: 1.0.0
-homepage: https://github.com/marchdev-tk/dart_package_template
-repository: https://github.com/marchdev-tk/dart_package_template
-issue_tracker: https://github.com/marchdev-tk/dart_package_template/issues
-description: dart_package_template description
+homepage: https://github.com/marchdev-tk/mdmoney
+repository: https://github.com/marchdev-tk/mdmoney
+issue_tracker: https://github.com/marchdev-tk/mdmoney/issues
+description: mdmoney description
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.18.6 <3.0.0'
 
 dependencies:
+  meta: ^1.7.0
+  decimal: ^2.3.2
 
 dev_dependencies:
   flutter_lints: ^1.0.0

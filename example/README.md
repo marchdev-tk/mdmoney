@@ -1,6 +1,6 @@
-# dart_package_template_example
+# mdmoney_example
 
-Demonstrates how to use the dart_package_template package.
+Demonstrates how to use the mdmoney package.
 
 ## Usage
 
