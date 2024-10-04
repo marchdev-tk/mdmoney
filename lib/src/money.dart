@@ -10,24 +10,24 @@ import 'formats.dart';
 /// this amount and currency.
 @immutable
 class Money implements Comparable<Money> {
-  /// Constructs an instance of the [Money] from [BigInt] cents and [Currency].
+  /// Constructs an instance of the [Money] from [BigInt] cents and [FiatCurrency].
   ///
   /// Internal contructor.
   const Money._(this.cents, this.currency);
 
-  /// Constructs an instance of the [Money] from cent amount and [Currency].
-  factory Money.fromCents(int cents, Currency currency) {
+  /// Constructs an instance of the [Money] from cent amount and [FiatCurrency].
+  factory Money.fromCents(int cents, FiatCurrency currency) {
     return Money._(BigInt.from(cents), currency);
   }
 
-  /// Constructs an instance of the [Money] from decimal amount and [Currency].
-  factory Money.fromDecimal(Decimal amount, Currency currency) {
+  /// Constructs an instance of the [Money] from decimal amount and [FiatCurrency].
+  factory Money.fromDecimal(Decimal amount, FiatCurrency currency) {
     final cents = (amount * Decimal.fromInt(100)).round();
     return Money._(cents.toBigInt(), currency);
   }
 
-  /// Constructs an instance of the [Money] from double amount and [Currency].
-  factory Money.fromDouble(double amount, Currency currency) {
+  /// Constructs an instance of the [Money] from double amount and [FiatCurrency].
+  factory Money.fromDouble(double amount, FiatCurrency currency) {
     final cents = (amount * 100).roundToDouble();
 
     if (cents.isInfinite) {
@@ -37,9 +37,9 @@ class Money implements Comparable<Money> {
     return Money._(BigInt.from(cents), currency);
   }
 
-  /// Constructs an instance of the [Money] from string and [Currency].
-  factory Money.fromString(String amount, [Currency? currency]) {
-    final currencyFromAmount = Currency.values.firstWhereOrNull(
+  /// Constructs an instance of the [Money] from string and [FiatCurrency].
+  factory Money.fromString(String amount, [FiatCurrency? currency]) {
+    final currencyFromAmount = FiatCurrency.values.firstWhereOrNull(
         (c) => amount.contains(c.icon) || amount.contains(c.code));
     final currencyAdjusted = currencyFromAmount ?? currency;
 
@@ -73,22 +73,22 @@ class Money implements Comparable<Money> {
   }
 
   /// Zero money amount of [currency].
-  factory Money.zeroOf(Currency currency) => Money.fromCents(0, currency);
+  factory Money.zeroOf(FiatCurrency currency) => Money.fromCents(0, currency);
 
   /// One money amount (100 cents) of [currency].
-  factory Money.oneOf(Currency currency) => Money.fromCents(100, currency);
+  factory Money.oneOf(FiatCurrency currency) => Money.fromCents(100, currency);
 
-  /// Zero money amount of [Currency.$default].
-  static final zero = Money.fromCents(0, Currency.$default);
+  /// Zero money amount of [FiatCurrency.$default].
+  static final zero = Money.fromCents(0, FiatCurrency.$default);
 
-  /// One money amount (100 cents) of [Currency.$default].
-  static final one = Money.fromCents(100, Currency.$default);
+  /// One money amount (100 cents) of [FiatCurrency.$default].
+  static final one = Money.fromCents(100, FiatCurrency.$default);
 
   /// Current amount in cents.
   final BigInt cents;
 
   /// Currency of the [cents]/amount.
-  final Currency currency;
+  final FiatCurrency currency;
 
   /// Returns the sign of this amount.
   ///
@@ -107,6 +107,21 @@ class Money implements Comparable<Money> {
 
   /// Whether this amount is positive.
   bool get isPositive => !isNegative;
+
+  /// Whether this amount is equals to zero or not.
+  bool get isZero => this == Money.zeroOf(currency);
+
+  /// Whether this amount is greater than zero or not.
+  bool get isGreaterThanZero => this > Money.zeroOf(currency);
+
+  /// Whether this amount is greater than or equals to zero or not.
+  bool get isGreaterThanOrEqualZero => this >= Money.zeroOf(currency);
+
+  /// Whether this amount is less than zero or not.
+  bool get isLessThanZero => this < Money.zeroOf(currency);
+
+  /// Whether this amount is less than or equals to zero or not.
+  bool get isLessThanOrEqualZero => this <= Money.zeroOf(currency);
 
   /// Gets integer part of the current amount.
   BigInt get integer => cents ~/ BigInt.from(100);
@@ -288,16 +303,16 @@ class Money implements Comparable<Money> {
 
   /// Gets formatted string representation of the current amount, based on the:
   /// - [CurrencyPosition];
-  /// - [CurrencyFormat];
+  /// - [FiatCurrencyFormat];
   /// - [MoneyFormat];
   /// - [RankFormat];
   /// - [DecimalSeparatorFormat].
   ///
-  /// Defaults are [CurrencyFormat.icon] and [MoneyFormat.fixedDouble].
+  /// Defaults are [FiatCurrencyFormat.icon] and [MoneyFormat.fixedDouble].
   @override
   String toString({
     CurrencyPosition currencyPosition = CurrencyPosition.end,
-    CurrencyFormat currencyFormat = CurrencyFormat.icon,
+    FiatCurrencyFormat currencyFormat = FiatCurrencyFormat.icon,
     MoneyFormat moneyFormat = MoneyFormat.fixedDouble,
     RankFormat rankFormat = RankFormat.space,
     DecimalSeparatorFormat decimalSeparatorFormat =
@@ -320,7 +335,7 @@ class Money implements Comparable<Money> {
       case CurrencyPosition.endSpaced:
         return '$moneyFmt $currencyFmt'.trimRight();
       case CurrencyPosition.decimalSeparator:
-        if (currencyFormat == CurrencyFormat.none) {
+        if (currencyFormat == FiatCurrencyFormat.none) {
           return moneyFmt;
         }
 

@@ -137,31 +137,31 @@ enum MoneyFormat {
         if (value.fractional == BigInt.zero) {
           return value.integer.toString();
         } else {
-          return value.toDouble().toString();
+          return value.toDecimal().toString();
         }
       case fixedDouble:
-        return value.toDouble().toStringAsFixed(2);
+        return value.toDecimal().toStringAsFixed(2);
     }
   }
 }
 
-/// Describes possible [Currency] formatting options.
-enum CurrencyFormat {
-  /// [Currency] value will not be used at all.
+/// Describes possible [FiatCurrency] formatting options.
+enum FiatCurrencyFormat {
+  /// [FiatCurrency] value will not be used at all.
   none,
 
-  /// [Currency] value will be formatted as a currency code.
+  /// [FiatCurrency] value will be formatted as a currency code.
   ///
   /// For instance: `UAH`.
   code,
 
-  /// [Currency] value will be formatted as a currency icon.
+  /// [FiatCurrency] value will be formatted as a currency icon.
   ///
   /// For instance: `$`.
   icon;
 
-  /// Formats [Currency].
-  String format(Currency value) {
+  /// Formats [FiatCurrency].
+  String format(FiatCurrency value) {
     switch (this) {
       case code:
         return value.code;
@@ -173,31 +173,31 @@ enum CurrencyFormat {
   }
 }
 
-/// Describes possible [Currency] position options.
+/// Describes possible [FiatCurrency] position options.
 enum CurrencyPosition {
-  /// [Currency] value should be before amount.
+  /// [FiatCurrency] value should be before amount.
   ///
   /// For instance: `$100.20`.
   start,
 
-  /// [Currency] value should be before amount with space between currency and
+  /// [FiatCurrency] value should be before amount with space between currency and
   /// amount.
   ///
   /// For instance: `$ 100.20`.
   startSpaced,
 
-  /// [Currency] value should be after amount.
+  /// [FiatCurrency] value should be after amount.
   ///
   /// For instance: `100.20$`.
   end,
 
-  /// [Currency] value should be after amount with space between currency and
+  /// [FiatCurrency] value should be after amount with space between currency and
   /// amount.
   ///
   /// For instance: `100.20 $`.
   endSpaced,
 
-  /// [Currency] value should be used as decimal seprator.
+  /// [FiatCurrency] value should be used as decimal seprator.
   ///
   /// For instance: `100$20`/`100$`/`0$20`.
   decimalSeparator;

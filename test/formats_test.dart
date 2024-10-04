@@ -326,19 +326,19 @@ void main() {
     group('integer >', () {
       test('1234', () {
         final actual = MoneyFormat.integer
-            .format(Money.fromDouble(1234, Currency.$default));
+            .format(Money.fromDouble(1234, FiatCurrency.$default));
         const expected = '1234';
         expect(actual, expected);
       });
       test('1234.5', () {
         final actual = MoneyFormat.integer
-            .format(Money.fromDouble(1234.5, Currency.$default));
+            .format(Money.fromDouble(1234.5, FiatCurrency.$default));
         const expected = '1234';
         expect(actual, expected);
       });
       test('1234.56', () {
         final actual = MoneyFormat.integer
-            .format(Money.fromDouble(1234.56, Currency.$default));
+            .format(Money.fromDouble(1234.56, FiatCurrency.$default));
         const expected = '1234';
         expect(actual, expected);
       });
@@ -347,19 +347,19 @@ void main() {
     group('fixedDouble >', () {
       test('1234', () {
         final actual = MoneyFormat.fixedDouble
-            .format(Money.fromDouble(1234, Currency.$default));
+            .format(Money.fromDouble(1234, FiatCurrency.$default));
         const expected = '1234.00';
         expect(actual, expected);
       });
       test('1234.5', () {
         final actual = MoneyFormat.fixedDouble
-            .format(Money.fromDouble(1234.5, Currency.$default));
+            .format(Money.fromDouble(1234.5, FiatCurrency.$default));
         const expected = '1234.50';
         expect(actual, expected);
       });
       test('1234.56', () {
         final actual = MoneyFormat.fixedDouble
-            .format(Money.fromDouble(1234.56, Currency.$default));
+            .format(Money.fromDouble(1234.56, FiatCurrency.$default));
         const expected = '1234.56';
         expect(actual, expected);
       });
@@ -368,19 +368,19 @@ void main() {
     group('flexibleDouble >', () {
       test('1234', () {
         final actual = MoneyFormat.flexibleDouble
-            .format(Money.fromDouble(1234, Currency.$default));
+            .format(Money.fromDouble(1234, FiatCurrency.$default));
         const expected = '1234';
         expect(actual, expected);
       });
       test('1234.5', () {
         final actual = MoneyFormat.flexibleDouble
-            .format(Money.fromDouble(1234.5, Currency.$default));
+            .format(Money.fromDouble(1234.5, FiatCurrency.$default));
         const expected = '1234.5';
         expect(actual, expected);
       });
       test('1234.56', () {
         final actual = MoneyFormat.flexibleDouble
-            .format(Money.fromDouble(1234.56, Currency.$default));
+            .format(Money.fromDouble(1234.56, FiatCurrency.$default));
         const expected = '1234.56';
         expect(actual, expected);
       });
@@ -389,18 +389,18 @@ void main() {
 
   group('CurrencyFormat >', () {
     test('none', () {
-      final actual = CurrencyFormat.none.format(Currency.$default);
+      final actual = FiatCurrencyFormat.none.format(FiatCurrency.$default);
       const expected = '';
       expect(actual, expected);
     });
     test('code', () {
-      final actual = CurrencyFormat.code.format(Currency.$default);
-      final expected = Currency.$default.code;
+      final actual = FiatCurrencyFormat.code.format(FiatCurrency.$default);
+      final expected = FiatCurrency.$default.code;
       expect(actual, expected);
     });
     test('icon', () {
-      final actual = CurrencyFormat.icon.format(Currency.$default);
-      final expected = Currency.$default.icon;
+      final actual = FiatCurrencyFormat.icon.format(FiatCurrency.$default);
+      final expected = FiatCurrency.$default.icon;
       expect(actual, expected);
     });
   });
