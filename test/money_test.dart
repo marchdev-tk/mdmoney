@@ -175,53 +175,61 @@ void main() {
       group('Currency General >', () {
         group('In args >', () {
           test('1${defaultCurrency.icon}', () {
-            final actual = Money.fromString('1', FiatCurrency.$default).cents;
+            final actual =
+                Money.fromString('1', currency: FiatCurrency.$default).cents;
             final expected = BigInt.from(100);
             expect(actual, expected);
           });
           test('1 cent', () {
             final actual =
-                Money.fromString('0.01', FiatCurrency.$default).cents;
+                Money.fromString('0.01', currency: FiatCurrency.$default).cents;
             final expected = BigInt.one;
             expect(actual, expected);
           });
           test('65.4 cents flooring', () {
             final actual =
-                Money.fromString('0.654', FiatCurrency.$default).cents;
+                Money.fromString('0.654', currency: FiatCurrency.$default)
+                    .cents;
             final expected = BigInt.from(65);
             expect(actual, expected);
           });
           test('34.5 cents ceiling', () {
             final actual =
-                Money.fromString('0.345', FiatCurrency.$default).cents;
+                Money.fromString('0.345', currency: FiatCurrency.$default)
+                    .cents;
             final expected = BigInt.from(35);
             expect(actual, expected);
           });
           test('0 cents', () {
-            final actual = Money.fromString('0', FiatCurrency.$default).cents;
+            final actual =
+                Money.fromString('0', currency: FiatCurrency.$default).cents;
             final expected = BigInt.zero;
             expect(actual, expected);
           });
           test('-1 cent', () {
             final actual =
-                Money.fromString('-0.01', FiatCurrency.$default).cents;
+                Money.fromString('-0.01', currency: FiatCurrency.$default)
+                    .cents;
             final expected = -BigInt.one;
             expect(actual, expected);
           });
           test('-34.5 cents ceiling', () {
             final actual =
-                Money.fromString('-0.345', FiatCurrency.$default).cents;
+                Money.fromString('-0.345', currency: FiatCurrency.$default)
+                    .cents;
             final expected = -BigInt.from(35);
             expect(actual, expected);
           });
           test('-65.4 cents flooring', () {
             final actual =
-                Money.fromString('-0.654', FiatCurrency.$default).cents;
+                Money.fromString('-0.654', currency: FiatCurrency.$default)
+                    .cents;
             final expected = -BigInt.from(65);
             expect(actual, expected);
           });
           test('-1${defaultCurrency.icon}', () {
-            final actual = Money.fromString('-1', FiatCurrency.$default).cents;
+            final actual =
+                Money.fromString('-1', currency: FiatCurrency.$default).cents;
             final expected = -BigInt.from(100);
             expect(actual, expected);
           });
@@ -230,37 +238,42 @@ void main() {
         group('In args (comma) >', () {
           test('1 cent', () {
             final actual =
-                Money.fromString('0,01', FiatCurrency.$default).cents;
+                Money.fromString('0,01', currency: FiatCurrency.$default).cents;
             final expected = BigInt.one;
             expect(actual, expected);
           });
           test('65.4 cents flooring', () {
             final actual =
-                Money.fromString('0,654', FiatCurrency.$default).cents;
+                Money.fromString('0,654', currency: FiatCurrency.$default)
+                    .cents;
             final expected = BigInt.from(65);
             expect(actual, expected);
           });
           test('34.5 cents ceiling', () {
             final actual =
-                Money.fromString('0,345', FiatCurrency.$default).cents;
+                Money.fromString('0,345', currency: FiatCurrency.$default)
+                    .cents;
             final expected = BigInt.from(35);
             expect(actual, expected);
           });
           test('-1 cent', () {
             final actual =
-                Money.fromString('-0,01', FiatCurrency.$default).cents;
+                Money.fromString('-0,01', currency: FiatCurrency.$default)
+                    .cents;
             final expected = -BigInt.one;
             expect(actual, expected);
           });
           test('-34.5 cents ceiling', () {
             final actual =
-                Money.fromString('-0,345', FiatCurrency.$default).cents;
+                Money.fromString('-0,345', currency: FiatCurrency.$default)
+                    .cents;
             final expected = -BigInt.from(35);
             expect(actual, expected);
           });
           test('-65.4 cents flooring', () {
             final actual =
-                Money.fromString('-0,654', FiatCurrency.$default).cents;
+                Money.fromString('-0,654', currency: FiatCurrency.$default)
+                    .cents;
             final expected = -BigInt.from(65);
             expect(actual, expected);
           });
@@ -270,13 +283,15 @@ void main() {
           group('In args (comma) >', () {
             test('positive amount', () {
               final actual =
-                  Money.fromString('1 000,01', FiatCurrency.$default).cents;
+                  Money.fromString('1 000,01', currency: FiatCurrency.$default)
+                      .cents;
               final expected = BigInt.from(100001);
               expect(actual, expected);
             });
             test('negative amount', () {
               final actual =
-                  Money.fromString('-1 000,01', FiatCurrency.$default).cents;
+                  Money.fromString('-1 000,01', currency: FiatCurrency.$default)
+                      .cents;
               final expected = -BigInt.from(100001);
               expect(actual, expected);
             });
@@ -285,13 +300,15 @@ void main() {
           group('In args (dot) >', () {
             test('positive amount', () {
               final actual =
-                  Money.fromString('1 000.01', FiatCurrency.$default).cents;
+                  Money.fromString('1 000.01', currency: FiatCurrency.$default)
+                      .cents;
               final expected = BigInt.from(100001);
               expect(actual, expected);
             });
             test('negative amount', () {
               final actual =
-                  Money.fromString('-1 000.01', FiatCurrency.$default).cents;
+                  Money.fromString('-1 000.01', currency: FiatCurrency.$default)
+                      .cents;
               final expected = -BigInt.from(100001);
               expect(actual, expected);
             });
@@ -811,7 +828,7 @@ void main() {
 
       group('Misc >', () {
         test('Empty string with currency in args', () {
-          final actual = Money.fromString('', FiatCurrency.$default);
+          final actual = Money.fromString('', currency: FiatCurrency.$default);
           final expected = Money.zeroOf(FiatCurrency.$default);
           expect(actual, expected);
         });
@@ -831,13 +848,16 @@ void main() {
           expect(actual, expected);
         });
         test('String without fractions but with decimal separator', () {
-          final actual = Money.fromString('123.', FiatCurrency.$default);
-          final expected = Money.fromString('123', FiatCurrency.$default);
+          final actual =
+              Money.fromString('123.', currency: FiatCurrency.$default);
+          final expected =
+              Money.fromString('123', currency: FiatCurrency.$default);
           expect(actual, expected);
         });
         test('Max finite', () {
           final actual =
-              Money.fromString('$maxFinite', FiatCurrency.$default).cents;
+              Money.fromString('$maxFinite', currency: FiatCurrency.$default)
+                  .cents;
           final expected = (Decimal.parse('$maxFinite') * Decimal.fromInt(100))
               .round()
               .toBigInt();

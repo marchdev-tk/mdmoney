@@ -1,8 +1,9 @@
-import 'package:collection/collection.dart';
+import 'dart:math' as math;
+
 import 'package:decimal/decimal.dart';
 import 'package:meta/meta.dart';
 
-import 'currency.dart';
+import 'fiat_currency.dart';
 import 'exceptions.dart';
 import 'formats.dart';
 
@@ -13,34 +14,52 @@ class Money implements Comparable<Money> {
   /// Constructs an instance of the [Money] from [BigInt] cents and [FiatCurrency].
   ///
   /// Internal contructor.
-  const Money._(this.cents, this.currency);
+  const Money._(this.cents, this.currency, this.precision);
 
   /// Constructs an instance of the [Money] from cent amount and [FiatCurrency].
-  factory Money.fromCents(int cents, FiatCurrency currency) {
-    return Money._(BigInt.from(cents), currency);
+  factory Money.fromCents(
+    int cents,
+    FiatCurrency currency, {
+    int? precision,
+  }) {
+    return Money._(BigInt.from(cents), currency, precision);
   }
 
   /// Constructs an instance of the [Money] from decimal amount and [FiatCurrency].
-  factory Money.fromDecimal(Decimal amount, FiatCurrency currency) {
-    final cents = (amount * Decimal.fromInt(100)).round();
-    return Money._(cents.toBigInt(), currency);
+  factory Money.fromDecimal(
+    Decimal amount,
+    FiatCurrency currency, {
+    int? precision,
+  }) {
+    final centModifier = _centModifier(precision ?? currency.precision);
+    final cents = (amount * Decimal.fromInt(centModifier)).round();
+    return Money._(cents.toBigInt(), currency, precision);
   }
 
   /// Constructs an instance of the [Money] from double amount and [FiatCurrency].
-  factory Money.fromDouble(double amount, FiatCurrency currency) {
-    final cents = (amount * 100).roundToDouble();
+  factory Money.fromDouble(
+    double amount,
+    FiatCurrency currency, {
+    int? precision,
+  }) {
+    final centModifier = _centModifier(precision ?? currency.precision);
+    final cents = (amount * centModifier).roundToDouble();
 
     if (cents.isInfinite) {
       throw const InfiniteNumberException();
     }
 
-    return Money._(BigInt.from(cents), currency);
+    return Money._(BigInt.from(cents), currency, precision);
   }
 
   /// Constructs an instance of the [Money] from string and [FiatCurrency].
-  factory Money.fromString(String amount, [FiatCurrency? currency]) {
-    final currencyFromAmount = FiatCurrency.values.firstWhereOrNull(
-        (c) => amount.contains(c.icon) || amount.contains(c.code));
+  factory Money.fromString(
+    String amount, {
+    FiatCurrency? currency,
+    int? precision,
+  }) {
+    final currencyFromAmount =
+        FiatCurrency.tryParse(amount.replaceAll(RegExp(r'[0-9.,\- ]'), ''));
     final currencyAdjusted = currencyFromAmount ?? currency;
 
     if (currencyAdjusted == null) {
@@ -49,7 +68,7 @@ class Money implements Comparable<Money> {
     if (amount.isEmpty ||
         amount == currencyAdjusted.icon ||
         amount == currencyAdjusted.code) {
-      return Money.zeroOf(currencyAdjusted);
+      return Money.zeroOf(currencyAdjusted, precision: precision);
     }
 
     var internalAmount = amount.replaceAll(' ', '').replaceAll(',', '.');
@@ -69,26 +88,41 @@ class Money implements Comparable<Money> {
 
     final decimalAmount = Decimal.parse(internalAmount);
 
-    return Money.fromDecimal(decimalAmount, currencyAdjusted);
+    return Money.fromDecimal(
+      decimalAmount,
+      currencyAdjusted,
+      precision: precision,
+    );
   }
 
   /// Zero money amount of [currency].
-  factory Money.zeroOf(FiatCurrency currency) => Money.fromCents(0, currency);
+  factory Money.zeroOf(FiatCurrency currency, {int? precision}) =>
+      Money.fromCents(0, currency, precision: precision);
 
-  /// One money amount (100 cents) of [currency].
-  factory Money.oneOf(FiatCurrency currency) => Money.fromCents(100, currency);
+  /// One money amount of [currency].
+  factory Money.oneOf(FiatCurrency currency, {int? precision}) =>
+      Money.fromDouble(1, currency, precision: precision);
 
   /// Zero money amount of [FiatCurrency.$default].
   static final zero = Money.fromCents(0, FiatCurrency.$default);
 
-  /// One money amount (100 cents) of [FiatCurrency.$default].
-  static final one = Money.fromCents(100, FiatCurrency.$default);
+  /// One money amount of [FiatCurrency.$default].
+  static final one = Money.fromDouble(1, FiatCurrency.$default);
+
+  static int _centModifier(int precision) => math.pow(10, precision).toInt();
+  int get _precision => precision ?? currency.precision;
 
   /// Current amount in cents.
   final BigInt cents;
 
   /// Currency of the [cents]/amount.
   final FiatCurrency currency;
+
+  /// Custom precision to use with this amount.
+  ///
+  /// Defaults to `null`, and therefore for precision will be used
+  /// [currency.precision], otherwise - value of this field will be used.
+  final int? precision;
 
   /// Returns the sign of this amount.
   ///
@@ -109,48 +143,69 @@ class Money implements Comparable<Money> {
   bool get isPositive => !isNegative;
 
   /// Whether this amount is equals to zero or not.
-  bool get isZero => this == Money.zeroOf(currency);
+  bool get isZero => this == Money.zeroOf(currency, precision: precision);
 
   /// Whether this amount is greater than zero or not.
-  bool get isGreaterThanZero => this > Money.zeroOf(currency);
+  bool get isGreaterThanZero =>
+      this > Money.zeroOf(currency, precision: precision);
 
   /// Whether this amount is greater than or equals to zero or not.
-  bool get isGreaterThanOrEqualZero => this >= Money.zeroOf(currency);
+  bool get isGreaterThanOrEqualZero =>
+      this >= Money.zeroOf(currency, precision: precision);
 
   /// Whether this amount is less than zero or not.
-  bool get isLessThanZero => this < Money.zeroOf(currency);
+  bool get isLessThanZero =>
+      this < Money.zeroOf(currency, precision: precision);
 
   /// Whether this amount is less than or equals to zero or not.
-  bool get isLessThanOrEqualZero => this <= Money.zeroOf(currency);
+  bool get isLessThanOrEqualZero =>
+      this <= Money.zeroOf(currency, precision: precision);
 
   /// Gets integer part of the current amount.
-  BigInt get integer => cents ~/ BigInt.from(100);
+  BigInt get integer => cents ~/ BigInt.from(_centModifier(_precision));
 
   /// Gets fractional part as cents.
   ///
-  /// Where possible values are [0..99].
+  /// Where possible values starts with [0] and precision of fraction is
+  /// defined in either [precision], if provided, or [currency.precision].
   BigInt get fractional {
-    if (cents.isNegative) {
-      return -(cents.abs() % BigInt.from(100));
+    if (_precision == 0) {
+      return BigInt.zero;
     }
 
-    return cents % BigInt.from(100);
+    if (cents.isNegative) {
+      return -(cents.abs() % BigInt.from(_centModifier(_precision)));
+    }
+
+    return cents % BigInt.from(_centModifier(_precision));
   }
 
   /// Gets fractional part as decimal value.
   ///
-  /// Where possible values are [0..0.99].
-  Decimal get fractionalDecimal =>
-      (Decimal.fromBigInt(fractional) / Decimal.fromInt(100)).toDecimal();
+  /// Where possible values starts with [0.0] and precision of fraction is
+  /// defined in either [precision], if provided, or [currency.precision].
+  Decimal get fractionalDecimal {
+    if (_precision == 0) {
+      return Decimal.zero;
+    }
+
+    final centModifier = _centModifier(_precision);
+    return (Decimal.fromBigInt(fractional) / Decimal.fromInt(centModifier))
+        .toDecimal();
+  }
 
   /// Gets fractional part as double value.
   ///
-  /// Where possible values are [0..0.99].
+  /// Where possible values starts with [0.0] and precision of fraction is
+  /// defined in either [precision], if provided, or [currency.precision].
   double get fractionalDouble => fractionalDecimal.toDouble();
 
   /// Gets decimal representation of the current amount.
-  Decimal toDecimal() =>
-      (Decimal.fromBigInt(cents) / Decimal.fromInt(100)).toDecimal();
+  Decimal toDecimal() {
+    final centModifier = _centModifier(_precision);
+    return (Decimal.fromBigInt(cents) / Decimal.fromInt(centModifier))
+        .toDecimal();
+  }
 
   /// Gets double representation of the current amount.
   double toDouble() => toDecimal().toDouble();
@@ -158,14 +213,20 @@ class Money implements Comparable<Money> {
   /// Returns the absolute value of this amount.
   Money abs() {
     if (cents.isNegative) {
-      return Money._(cents.abs(), currency);
+      return Money._(cents.abs(), currency, precision);
     }
 
     return this;
   }
 
   /// Returns the integer amount closest to the current amount.
-  Money round() => Money.fromDouble(toDouble().roundToDouble(), currency);
+  Money round() {
+    return Money.fromDouble(
+      toDouble().roundToDouble(),
+      currency,
+      precision: precision,
+    );
+  }
 
   /// Returns the least amount that is not smaller than this amount.
   ///
@@ -177,7 +238,11 @@ class Money implements Comparable<Money> {
 
     final addition = isPositive ? BigInt.one : BigInt.zero;
 
-    return Money._((integer + addition) * BigInt.from(100), currency);
+    return Money._(
+      (integer + addition) * BigInt.from(_centModifier(_precision)),
+      currency,
+      precision,
+    );
   }
 
   /// Returns the greatest amount no greater than this amount.
@@ -190,17 +255,21 @@ class Money implements Comparable<Money> {
 
     final substraction = isPositive ? BigInt.zero : BigInt.one;
 
-    return Money._((integer - substraction) * BigInt.from(100), currency);
+    return Money._(
+      (integer - substraction) * BigInt.from(_centModifier(_precision)),
+      currency,
+      precision,
+    );
   }
 
-  Money operator -() => Money._(-cents, currency);
+  Money operator -() => Money._(-cents, currency, precision);
 
   Money operator +(Money other) {
     if (currency != other.currency) {
       throw const CurrencyMismatchException();
     }
 
-    return Money._(cents + other.cents, currency);
+    return Money._(cents + other.cents, currency, precision);
   }
 
   Money operator -(Money other) {
@@ -208,7 +277,7 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return Money._(cents - other.cents, currency);
+    return Money._(cents - other.cents, currency, precision);
   }
 
   // ! Possibly change from double to dynamic to support double and Decimal
@@ -220,7 +289,7 @@ class Money implements Comparable<Money> {
     final amount =
         Decimal.fromBigInt(cents) * Decimal.parse(multiplier.toString());
 
-    return Money._(amount.round().toBigInt(), currency);
+    return Money._(amount.round().toBigInt(), currency, precision);
   }
 
   // ! Possibly change from double to dynamic to support double and Decimal
@@ -235,7 +304,7 @@ class Money implements Comparable<Money> {
     final amount =
         Decimal.fromBigInt(cents) / Decimal.parse(divider.toString());
 
-    return Money._(amount.round(), currency);
+    return Money._(amount.round(), currency, precision);
   }
 
   bool operator <(Money other) {

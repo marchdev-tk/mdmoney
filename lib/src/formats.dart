@@ -1,4 +1,4 @@
-import 'currency.dart';
+import 'fiat_currency.dart';
 import 'money.dart';
 
 final _doubleRegex = RegExp(r'^(-?)(0|([1-9][0-9]*))(\.[0-9]{1,2})?$');
@@ -129,7 +129,7 @@ enum MoneyFormat {
   fixedDouble;
 
   /// Formats [Money].
-  String format(Money value) {
+  String format(Money value, [int? precision]) {
     switch (this) {
       case integer:
         return value.integer.toString();
@@ -140,7 +140,8 @@ enum MoneyFormat {
           return value.toDecimal().toString();
         }
       case fixedDouble:
-        return value.toDecimal().toStringAsFixed(2);
+        return value.toDecimal().toStringAsFixed(
+            precision ?? value.precision ?? value.currency.precision);
     }
   }
 }
