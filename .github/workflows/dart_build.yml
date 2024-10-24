@@ -21,10 +21,10 @@ jobs:
       uses: dart-lang/setup-dart@v1.6.0
 
     - name: 'Get Packages'
-      run: pub get
+      run: dart pub get
 
     - name: 'Run tests'
-      run: pub run test
+      run: dart pub run test
 
     - name: 'Dry Run Publishing'
       run: dart pub publish --dry-run
