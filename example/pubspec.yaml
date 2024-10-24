@@ -2,7 +2,7 @@ name: mdmoney_example
 description: Example command line application of mdmoney package.
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
   mdmoney:
