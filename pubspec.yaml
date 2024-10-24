@@ -3,7 +3,7 @@ version: 1.0.0
 homepage: https://github.com/marchdev-tk/mdmoney
 repository: https://github.com/marchdev-tk/mdmoney
 issue_tracker: https://github.com/marchdev-tk/mdmoney/issues
-description: mdmoney description
+description: march.dev money library. Provides a new way to work with a money. From highly flexible creation to rich data manipulation and stringification options.
 
 environment:
   sdk: '>=3.5.0 <4.0.0'

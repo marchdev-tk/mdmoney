@@ -2,4 +2,4 @@
 
 ## 1.0.0
 
-* Add changes here
+* Added fully functional and totally tested `Money`.
