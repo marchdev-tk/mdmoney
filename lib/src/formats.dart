@@ -1,5 +1,4 @@
-import 'fiat_currency.dart';
-import 'money.dart';
+import 'package:mdmoney/mdmoney.dart';
 
 final _doubleRegex = RegExp(r'^(-?)(0|([1-9][0-9]*))(\.[0-9]{1,2})?$');
 final _doubleRankedRegex = RegExp(r'^(-?)(0|([1-9][0-9 ]*))(\.[0-9]{1,2})?$');
@@ -140,8 +139,14 @@ enum MoneyFormat {
           return value.toDecimal().toString();
         }
       case fixedDouble:
-        return value.toDecimal().toStringAsFixed(
-            precision ?? value.precision ?? value.currency.precision);
+        final adjustedPrecision =
+            precision ?? value.precision ?? value.currency.precision;
+
+        if (adjustedPrecision < 0) {
+          throw NegativePrecisionException();
+        }
+
+        return value.toDecimal().toStringAsFixed(adjustedPrecision);
     }
   }
 }

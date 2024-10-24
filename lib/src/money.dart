@@ -14,7 +14,8 @@ class Money implements Comparable<Money> {
   /// Constructs an instance of the [Money] from [BigInt] cents and [FiatCurrency].
   ///
   /// Internal contructor.
-  const Money._(this.cents, this.currency, this.precision);
+  const Money._(this.cents, this.currency, this.precision)
+      : assert(precision == null || precision >= 0);
 
   /// Constructs an instance of the [Money] from cent amount and [FiatCurrency].
   factory Money.fromCents(
@@ -22,6 +23,10 @@ class Money implements Comparable<Money> {
     FiatCurrency currency, {
     int? precision,
   }) {
+    if (precision != null && precision < 0) {
+      throw NegativePrecisionException();
+    }
+
     return Money._(BigInt.from(cents), currency, precision);
   }
 
@@ -31,6 +36,10 @@ class Money implements Comparable<Money> {
     FiatCurrency currency, {
     int? precision,
   }) {
+    if (precision != null && precision < 0) {
+      throw NegativePrecisionException();
+    }
+
     final centModifier = _centModifier(precision ?? currency.precision);
     final cents = (amount * Decimal.fromInt(centModifier)).round();
     return Money._(cents.toBigInt(), currency, precision);
@@ -42,6 +51,10 @@ class Money implements Comparable<Money> {
     FiatCurrency currency, {
     int? precision,
   }) {
+    if (precision != null && precision < 0) {
+      throw NegativePrecisionException();
+    }
+
     final centModifier = _centModifier(precision ?? currency.precision);
     final cents = (amount * centModifier).roundToDouble();
 
@@ -58,6 +71,10 @@ class Money implements Comparable<Money> {
     FiatCurrency? currency,
     int? precision,
   }) {
+    if (precision != null && precision < 0) {
+      throw NegativePrecisionException();
+    }
+
     final currencyFromAmount =
         FiatCurrency.tryParse(amount.replaceAll(RegExp(r'[0-9.,\- ]'), ''));
     final currencyAdjusted = currencyFromAmount ?? currency;
@@ -122,6 +139,9 @@ class Money implements Comparable<Money> {
   ///
   /// Defaults to `null`, and therefore for precision will be used
   /// [currency.precision], otherwise - value of this field will be used.
+  ///
+  /// *Please note* that precision cannot be negative, if so -
+  /// [NegativePrecisionException] will be thrown.
   final int? precision;
 
   /// Returns the sign of this amount.

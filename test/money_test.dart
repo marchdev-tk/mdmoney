@@ -17,156 +17,246 @@ void main() {
   group('Money constructor tests >', () {
     group('fromCents >', () {
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromCents(100, FiatCurrency.$default).cents;
+        final actual = Money.fromCents(100, defaultCurrency).cents;
         final expected = BigInt.from(100);
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromCents(1, FiatCurrency.$default).cents;
+        final actual = Money.fromCents(1, defaultCurrency).cents;
         final expected = BigInt.one;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromCents(0, FiatCurrency.$default).cents;
+        final actual = Money.fromCents(0, defaultCurrency).cents;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual = Money.fromCents(-1, FiatCurrency.$default).cents;
+        final actual = Money.fromCents(-1, defaultCurrency).cents;
         final expected = -BigInt.one;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromCents(-100, FiatCurrency.$default).cents;
+        final actual = Money.fromCents(-100, defaultCurrency).cents;
         final expected = -BigInt.from(100);
+        expect(actual, expected);
+      });
+      test('Precision -1', () {
+        Money actual() => Money.fromCents(0, defaultCurrency, precision: -1);
+        final expected =
+            throwsA(const TypeMatcher<NegativePrecisionException>());
+        expect(actual, expected);
+      });
+      test('Precision 0', () {
+        final actual = Money.fromCents(
+          123456789,
+          defaultCurrency,
+          precision: 0,
+        ).fractional.toInt();
+        final expected = 0;
+        expect(actual, expected);
+      });
+      test('Precision 4', () {
+        final actual = Money.fromCents(
+          123456789,
+          defaultCurrency,
+          precision: 4,
+        ).fractional.toInt();
+        final expected = 6789;
+        expect(actual, expected);
+      });
+      test('Precision 12', () {
+        final actual = Money.fromCents(
+          123456789,
+          defaultCurrency,
+          precision: 12,
+        ).fractional.toInt();
+        final expected = 123456789;
         expect(actual, expected);
       });
     });
 
     group('fromDecimal >', () {
       test('1${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDecimal(Decimal.one, FiatCurrency.$default).cents;
+        final actual = Money.fromDecimal(Decimal.one, defaultCurrency).cents;
         final expected = BigInt.from(100);
         expect(actual, expected);
       });
       test('1 cent', () {
         final actual =
-            Money.fromDecimal(Decimal.parse('0.01'), FiatCurrency.$default)
-                .cents;
+            Money.fromDecimal(Decimal.parse('0.01'), defaultCurrency).cents;
         final expected = BigInt.one;
         expect(actual, expected);
       });
       test('65.4 cents flooring', () {
         final actual =
-            Money.fromDecimal(Decimal.parse('0.654'), FiatCurrency.$default)
-                .cents;
+            Money.fromDecimal(Decimal.parse('0.654'), defaultCurrency).cents;
         final expected = BigInt.from(65);
         expect(actual, expected);
       });
       test('34.5 cents ceiling', () {
         final actual =
-            Money.fromDecimal(Decimal.parse('0.345'), FiatCurrency.$default)
-                .cents;
+            Money.fromDecimal(Decimal.parse('0.345'), defaultCurrency).cents;
         final expected = BigInt.from(35);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual =
-            Money.fromDecimal(Decimal.zero, FiatCurrency.$default).cents;
+        final actual = Money.fromDecimal(Decimal.zero, defaultCurrency).cents;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1 cent', () {
         final actual =
-            Money.fromDecimal(Decimal.parse('-0.01'), FiatCurrency.$default)
-                .cents;
+            Money.fromDecimal(Decimal.parse('-0.01'), defaultCurrency).cents;
         final expected = -BigInt.one;
         expect(actual, expected);
       });
       test('-34.5 cents ceiling', () {
         final actual =
-            Money.fromDecimal(Decimal.parse('-0.345'), FiatCurrency.$default)
-                .cents;
+            Money.fromDecimal(Decimal.parse('-0.345'), defaultCurrency).cents;
         final expected = -BigInt.from(35);
         expect(actual, expected);
       });
       test('-65.4 cents flooring', () {
         final actual =
-            Money.fromDecimal(Decimal.parse('-0.654'), FiatCurrency.$default)
-                .cents;
+            Money.fromDecimal(Decimal.parse('-0.654'), defaultCurrency).cents;
         final expected = -BigInt.from(65);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDecimal(-Decimal.one, FiatCurrency.$default).cents;
+        final actual = Money.fromDecimal(-Decimal.one, defaultCurrency).cents;
         final expected = -BigInt.from(100);
         expect(actual, expected);
       });
       test('Max finite', () {
         final amount = Decimal.parse('$maxFinite');
-        final actual = Money.fromDecimal(amount, FiatCurrency.$default).cents;
+        final actual = Money.fromDecimal(amount, defaultCurrency).cents;
         final expected = (amount * Decimal.fromInt(100)).round().toBigInt();
+        expect(actual, expected);
+      });
+      test('Precision -1', () {
+        Money actual() =>
+            Money.fromDecimal(Decimal.zero, defaultCurrency, precision: -1);
+        final expected =
+            throwsA(const TypeMatcher<NegativePrecisionException>());
+        expect(actual, expected);
+      });
+      test('Precision 0', () {
+        final actual = Money.fromDecimal(
+          Decimal.parse('0.123456789'),
+          defaultCurrency,
+          precision: 0,
+        ).cents.toInt();
+        final expected = 0;
+        expect(actual, expected);
+      });
+      test('Precision 4', () {
+        final actual = Money.fromDecimal(
+          Decimal.parse('0.123456789'),
+          defaultCurrency,
+          precision: 4,
+        ).cents.toInt();
+        final expected = 1235;
+        expect(actual, expected);
+      });
+      test('Precision 12', () {
+        final actual = Money.fromDecimal(
+          Decimal.parse('0.123456789'),
+          defaultCurrency,
+          precision: 12,
+        ).cents.toInt();
+        final expected = 123456789000;
         expect(actual, expected);
       });
     });
 
     group('fromDouble >', () {
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(1, defaultCurrency).cents;
         final expected = BigInt.from(100);
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(0.01, defaultCurrency).cents;
         final expected = BigInt.one;
         expect(actual, expected);
       });
       test('65.4 cents flooring', () {
-        final actual = Money.fromDouble(0.654, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(0.654, defaultCurrency).cents;
         final expected = BigInt.from(65);
         expect(actual, expected);
       });
       test('34.5 cents ceiling', () {
-        final actual = Money.fromDouble(0.345, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(0.345, defaultCurrency).cents;
         final expected = BigInt.from(35);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(0, defaultCurrency).cents;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual = Money.fromDouble(-0.01, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(-0.01, defaultCurrency).cents;
         final expected = -BigInt.one;
         expect(actual, expected);
       });
       test('-34.5 cents ceiling', () {
-        final actual = Money.fromDouble(-0.345, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(-0.345, defaultCurrency).cents;
         final expected = -BigInt.from(35);
         expect(actual, expected);
       });
       test('-65.4 cents flooring', () {
-        final actual = Money.fromDouble(-0.654, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(-0.654, defaultCurrency).cents;
         final expected = -BigInt.from(65);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(-1, defaultCurrency).cents;
         final expected = -BigInt.from(100);
         expect(actual, expected);
       });
       test('Max finite', () {
-        final actual = Money.fromDouble(maxFinite, FiatCurrency.$default).cents;
+        final actual = Money.fromDouble(maxFinite, defaultCurrency).cents;
         final expected = BigInt.from(maxFiniteCents);
         expect(actual, expected);
       });
       test('Infinite', () {
-        Money actual() =>
-            Money.fromDouble(maxFinite * 10, FiatCurrency.$default);
+        Money actual() => Money.fromDouble(maxFinite * 10, defaultCurrency);
         final expected = throwsA(const TypeMatcher<InfiniteNumberException>());
+        expect(actual, expected);
+      });
+      test('Precision -1', () {
+        Money actual() => Money.fromDouble(1, defaultCurrency, precision: -1);
+        final expected =
+            throwsA(const TypeMatcher<NegativePrecisionException>());
+        expect(actual, expected);
+      });
+      test('Precision 0', () {
+        final actual = Money.fromDouble(
+          0.123456789,
+          defaultCurrency,
+          precision: 0,
+        ).cents.toInt();
+        final expected = 0;
+        expect(actual, expected);
+      });
+      test('Precision 4', () {
+        final actual = Money.fromDouble(
+          0.123456789,
+          defaultCurrency,
+          precision: 4,
+        ).cents.toInt();
+        final expected = 1235;
+        expect(actual, expected);
+      });
+      test('Precision 12', () {
+        final actual = Money.fromDouble(
+          0.123456789,
+          defaultCurrency,
+          precision: 12,
+        ).cents.toInt();
+        final expected = 123456789000;
         expect(actual, expected);
       });
     });
@@ -176,60 +266,55 @@ void main() {
         group('In args >', () {
           test('1${defaultCurrency.icon}', () {
             final actual =
-                Money.fromString('1', currency: FiatCurrency.$default).cents;
+                Money.fromString('1', currency: defaultCurrency).cents;
             final expected = BigInt.from(100);
             expect(actual, expected);
           });
           test('1 cent', () {
             final actual =
-                Money.fromString('0.01', currency: FiatCurrency.$default).cents;
+                Money.fromString('0.01', currency: defaultCurrency).cents;
             final expected = BigInt.one;
             expect(actual, expected);
           });
           test('65.4 cents flooring', () {
             final actual =
-                Money.fromString('0.654', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('0.654', currency: defaultCurrency).cents;
             final expected = BigInt.from(65);
             expect(actual, expected);
           });
           test('34.5 cents ceiling', () {
             final actual =
-                Money.fromString('0.345', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('0.345', currency: defaultCurrency).cents;
             final expected = BigInt.from(35);
             expect(actual, expected);
           });
           test('0 cents', () {
             final actual =
-                Money.fromString('0', currency: FiatCurrency.$default).cents;
+                Money.fromString('0', currency: defaultCurrency).cents;
             final expected = BigInt.zero;
             expect(actual, expected);
           });
           test('-1 cent', () {
             final actual =
-                Money.fromString('-0.01', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('-0.01', currency: defaultCurrency).cents;
             final expected = -BigInt.one;
             expect(actual, expected);
           });
           test('-34.5 cents ceiling', () {
             final actual =
-                Money.fromString('-0.345', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('-0.345', currency: defaultCurrency).cents;
             final expected = -BigInt.from(35);
             expect(actual, expected);
           });
           test('-65.4 cents flooring', () {
             final actual =
-                Money.fromString('-0.654', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('-0.654', currency: defaultCurrency).cents;
             final expected = -BigInt.from(65);
             expect(actual, expected);
           });
           test('-1${defaultCurrency.icon}', () {
             final actual =
-                Money.fromString('-1', currency: FiatCurrency.$default).cents;
+                Money.fromString('-1', currency: defaultCurrency).cents;
             final expected = -BigInt.from(100);
             expect(actual, expected);
           });
@@ -238,42 +323,37 @@ void main() {
         group('In args (comma) >', () {
           test('1 cent', () {
             final actual =
-                Money.fromString('0,01', currency: FiatCurrency.$default).cents;
+                Money.fromString('0,01', currency: defaultCurrency).cents;
             final expected = BigInt.one;
             expect(actual, expected);
           });
           test('65.4 cents flooring', () {
             final actual =
-                Money.fromString('0,654', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('0,654', currency: defaultCurrency).cents;
             final expected = BigInt.from(65);
             expect(actual, expected);
           });
           test('34.5 cents ceiling', () {
             final actual =
-                Money.fromString('0,345', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('0,345', currency: defaultCurrency).cents;
             final expected = BigInt.from(35);
             expect(actual, expected);
           });
           test('-1 cent', () {
             final actual =
-                Money.fromString('-0,01', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('-0,01', currency: defaultCurrency).cents;
             final expected = -BigInt.one;
             expect(actual, expected);
           });
           test('-34.5 cents ceiling', () {
             final actual =
-                Money.fromString('-0,345', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('-0,345', currency: defaultCurrency).cents;
             final expected = -BigInt.from(35);
             expect(actual, expected);
           });
           test('-65.4 cents flooring', () {
             final actual =
-                Money.fromString('-0,654', currency: FiatCurrency.$default)
-                    .cents;
+                Money.fromString('-0,654', currency: defaultCurrency).cents;
             final expected = -BigInt.from(65);
             expect(actual, expected);
           });
@@ -283,14 +363,13 @@ void main() {
           group('In args (comma) >', () {
             test('positive amount', () {
               final actual =
-                  Money.fromString('1 000,01', currency: FiatCurrency.$default)
-                      .cents;
+                  Money.fromString('1 000,01', currency: defaultCurrency).cents;
               final expected = BigInt.from(100001);
               expect(actual, expected);
             });
             test('negative amount', () {
               final actual =
-                  Money.fromString('-1 000,01', currency: FiatCurrency.$default)
+                  Money.fromString('-1 000,01', currency: defaultCurrency)
                       .cents;
               final expected = -BigInt.from(100001);
               expect(actual, expected);
@@ -300,14 +379,13 @@ void main() {
           group('In args (dot) >', () {
             test('positive amount', () {
               final actual =
-                  Money.fromString('1 000.01', currency: FiatCurrency.$default)
-                      .cents;
+                  Money.fromString('1 000.01', currency: defaultCurrency).cents;
               final expected = BigInt.from(100001);
               expect(actual, expected);
             });
             test('negative amount', () {
               final actual =
-                  Money.fromString('-1 000.01', currency: FiatCurrency.$default)
+                  Money.fromString('-1 000.01', currency: defaultCurrency)
                       .cents;
               final expected = -BigInt.from(100001);
               expect(actual, expected);
@@ -828,13 +906,13 @@ void main() {
 
       group('Misc >', () {
         test('Empty string with currency in args', () {
-          final actual = Money.fromString('', currency: FiatCurrency.$default);
-          final expected = Money.zeroOf(FiatCurrency.$default);
+          final actual = Money.fromString('', currency: defaultCurrency);
+          final expected = Money.zeroOf(defaultCurrency);
           expect(actual, expected);
         });
         test('Empty string with currency in string', () {
-          final actual = Money.fromString(FiatCurrency.$default.icon);
-          final expected = Money.zeroOf(FiatCurrency.$default);
+          final actual = Money.fromString(defaultCurrency.icon);
+          final expected = Money.zeroOf(defaultCurrency);
           expect(actual, expected);
         });
         test('Empty string without currency', () {
@@ -848,19 +926,50 @@ void main() {
           expect(actual, expected);
         });
         test('String without fractions but with decimal separator', () {
-          final actual =
-              Money.fromString('123.', currency: FiatCurrency.$default);
-          final expected =
-              Money.fromString('123', currency: FiatCurrency.$default);
+          final actual = Money.fromString('123.', currency: defaultCurrency);
+          final expected = Money.fromString('123', currency: defaultCurrency);
           expect(actual, expected);
         });
         test('Max finite', () {
           final actual =
-              Money.fromString('$maxFinite', currency: FiatCurrency.$default)
-                  .cents;
+              Money.fromString('$maxFinite', currency: defaultCurrency).cents;
           final expected = (Decimal.parse('$maxFinite') * Decimal.fromInt(100))
               .round()
               .toBigInt();
+          expect(actual, expected);
+        });
+        test('Precision -1', () {
+          Money actual() =>
+              Money.fromString('1', currency: defaultCurrency, precision: -1);
+          final expected =
+              throwsA(const TypeMatcher<NegativePrecisionException>());
+          expect(actual, expected);
+        });
+        test('Precision 0', () {
+          final actual = Money.fromString(
+            '0.123456789',
+            currency: defaultCurrency,
+            precision: 0,
+          ).cents.toInt();
+          final expected = 0;
+          expect(actual, expected);
+        });
+        test('Precision 4', () {
+          final actual = Money.fromString(
+            '0.123456789',
+            currency: defaultCurrency,
+            precision: 4,
+          ).cents.toInt();
+          final expected = 1235;
+          expect(actual, expected);
+        });
+        test('Precision 12', () {
+          final actual = Money.fromString(
+            '0.123456789',
+            currency: defaultCurrency,
+            precision: 12,
+          ).cents.toInt();
+          final expected = 123456789000;
           expect(actual, expected);
         });
       });
@@ -870,47 +979,47 @@ void main() {
   group('Money unary operations tests >', () {
     group('integer >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(1.5, defaultCurrency).integer;
         final expected = BigInt.one;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(1, defaultCurrency).integer;
         final expected = BigInt.one;
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual = Money.fromDouble(0.99, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(0.99, defaultCurrency).integer;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(0.01, defaultCurrency).integer;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(0, defaultCurrency).integer;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual = Money.fromDouble(-0.01, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(-0.01, defaultCurrency).integer;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual = Money.fromDouble(-0.99, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(-0.99, defaultCurrency).integer;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(-1, defaultCurrency).integer;
         final expected = -BigInt.one;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).integer;
+        final actual = Money.fromDouble(-1.5, defaultCurrency).integer;
         final expected = -BigInt.one;
         expect(actual, expected);
       });
@@ -918,49 +1027,47 @@ void main() {
 
     group('fractional >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(1.5, defaultCurrency).fractional;
         final expected = BigInt.from(50);
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(1, defaultCurrency).fractional;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual = Money.fromDouble(0.99, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(0.99, defaultCurrency).fractional;
         final expected = BigInt.from(99);
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(0.01, defaultCurrency).fractional;
         final expected = BigInt.one;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(0, defaultCurrency).fractional;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(-0.01, defaultCurrency).fractional;
         final expected = -BigInt.one;
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual =
-            Money.fromDouble(-0.99, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(-0.99, defaultCurrency).fractional;
         final expected = -BigInt.from(99);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(-1, defaultCurrency).fractional;
         final expected = BigInt.zero;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).fractional;
+        final actual = Money.fromDouble(-1.5, defaultCurrency).fractional;
         final expected = -BigInt.from(50);
         expect(actual, expected);
       });
@@ -968,56 +1075,52 @@ void main() {
 
     group('fractionalDecimal >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(1.5, FiatCurrency.$default).fractionalDecimal;
+        final actual = Money.fromDouble(1.5, defaultCurrency).fractionalDecimal;
         final expected = Decimal.parse('0.5');
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(1, FiatCurrency.$default).fractionalDecimal;
+        final actual = Money.fromDouble(1, defaultCurrency).fractionalDecimal;
         final expected = Decimal.zero;
         expect(actual, expected);
       });
       test('99 cents', () {
         final actual =
-            Money.fromDouble(0.99, FiatCurrency.$default).fractionalDecimal;
+            Money.fromDouble(0.99, defaultCurrency).fractionalDecimal;
         final expected = Decimal.parse('0.99');
         expect(actual, expected);
       });
       test('1 cent', () {
         final actual =
-            Money.fromDouble(0.01, FiatCurrency.$default).fractionalDecimal;
+            Money.fromDouble(0.01, defaultCurrency).fractionalDecimal;
         final expected = Decimal.parse('0.01');
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual =
-            Money.fromDouble(0, FiatCurrency.$default).fractionalDecimal;
+        final actual = Money.fromDouble(0, defaultCurrency).fractionalDecimal;
         final expected = Decimal.zero;
         expect(actual, expected);
       });
       test('-1 cent', () {
         final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).fractionalDecimal;
+            Money.fromDouble(-0.01, defaultCurrency).fractionalDecimal;
         final expected = Decimal.parse('-0.01');
         expect(actual, expected);
       });
       test('-99 cents', () {
         final actual =
-            Money.fromDouble(-0.99, FiatCurrency.$default).fractionalDecimal;
+            Money.fromDouble(-0.99, defaultCurrency).fractionalDecimal;
         final expected = Decimal.parse('-0.99');
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(-1, FiatCurrency.$default).fractionalDecimal;
+        final actual = Money.fromDouble(-1, defaultCurrency).fractionalDecimal;
         final expected = Decimal.zero;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
         final actual =
-            Money.fromDouble(-1.5, FiatCurrency.$default).fractionalDecimal;
+            Money.fromDouble(-1.5, defaultCurrency).fractionalDecimal;
         final expected = Decimal.parse('-0.5');
         expect(actual, expected);
       });
@@ -1025,56 +1128,49 @@ void main() {
 
     group('fractionalDouble >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(1.5, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(1.5, defaultCurrency).fractionalDouble;
         const expected = 0.5;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(1, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(1, defaultCurrency).fractionalDouble;
         const expected = 0.0;
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual =
-            Money.fromDouble(0.99, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(0.99, defaultCurrency).fractionalDouble;
         const expected = 0.99;
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual =
-            Money.fromDouble(0.01, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(0.01, defaultCurrency).fractionalDouble;
         const expected = 0.01;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual =
-            Money.fromDouble(0, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(0, defaultCurrency).fractionalDouble;
         const expected = 0;
         expect(actual, expected);
       });
       test('-1 cent', () {
         final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).fractionalDouble;
+            Money.fromDouble(-0.01, defaultCurrency).fractionalDouble;
         const expected = -0.01;
         expect(actual, expected);
       });
       test('-99 cents', () {
         final actual =
-            Money.fromDouble(-0.99, FiatCurrency.$default).fractionalDouble;
+            Money.fromDouble(-0.99, defaultCurrency).fractionalDouble;
         const expected = -0.99;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(-1, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(-1, defaultCurrency).fractionalDouble;
         const expected = 0.0;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(-1.5, FiatCurrency.$default).fractionalDouble;
+        final actual = Money.fromDouble(-1.5, defaultCurrency).fractionalDouble;
         const expected = -0.5;
         expect(actual, expected);
       });
@@ -1082,47 +1178,47 @@ void main() {
 
     group('sign >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(1.5, defaultCurrency).sign;
         const expected = 1;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(1, defaultCurrency).sign;
         const expected = 1;
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual = Money.fromDouble(0.99, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(0.99, defaultCurrency).sign;
         const expected = 1;
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(0.01, defaultCurrency).sign;
         const expected = 1;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(0, defaultCurrency).sign;
         const expected = 0;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual = Money.fromDouble(-0.01, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(-0.01, defaultCurrency).sign;
         const expected = -1;
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual = Money.fromDouble(-0.99, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(-0.99, defaultCurrency).sign;
         const expected = -1;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(-1, defaultCurrency).sign;
         const expected = -1;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).sign;
+        final actual = Money.fromDouble(-1.5, defaultCurrency).sign;
         const expected = -1;
         expect(actual, expected);
       });
@@ -1130,47 +1226,47 @@ void main() {
 
     group('isEven >', () {
       test('1.51${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.51, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(1.51, defaultCurrency).isEven;
         const expected = false;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(1, defaultCurrency).isEven;
         const expected = true;
         expect(actual, expected);
       });
       test('51 cents', () {
-        final actual = Money.fromDouble(0.51, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(0.51, defaultCurrency).isEven;
         const expected = false;
         expect(actual, expected);
       });
       test('2 cents', () {
-        final actual = Money.fromDouble(0.02, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(0.02, defaultCurrency).isEven;
         const expected = true;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(0, defaultCurrency).isEven;
         const expected = true;
         expect(actual, expected);
       });
       test('-2 cents', () {
-        final actual = Money.fromDouble(-0.02, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(-0.02, defaultCurrency).isEven;
         const expected = true;
         expect(actual, expected);
       });
       test('-51 cents', () {
-        final actual = Money.fromDouble(-0.51, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(-0.51, defaultCurrency).isEven;
         const expected = false;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(-1, defaultCurrency).isEven;
         const expected = true;
         expect(actual, expected);
       });
       test('-1.51${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.51, FiatCurrency.$default).isEven;
+        final actual = Money.fromDouble(-1.51, defaultCurrency).isEven;
         const expected = false;
         expect(actual, expected);
       });
@@ -1178,47 +1274,47 @@ void main() {
 
     group('isOdd >', () {
       test('1.51${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.51, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(1.51, defaultCurrency).isOdd;
         const expected = true;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(1, defaultCurrency).isOdd;
         const expected = false;
         expect(actual, expected);
       });
       test('51 cents', () {
-        final actual = Money.fromDouble(0.51, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(0.51, defaultCurrency).isOdd;
         const expected = true;
         expect(actual, expected);
       });
       test('2 cents', () {
-        final actual = Money.fromDouble(0.02, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(0.02, defaultCurrency).isOdd;
         const expected = false;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(0, defaultCurrency).isOdd;
         const expected = false;
         expect(actual, expected);
       });
       test('-2 cents', () {
-        final actual = Money.fromDouble(-0.02, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(-0.02, defaultCurrency).isOdd;
         const expected = false;
         expect(actual, expected);
       });
       test('-51 cents', () {
-        final actual = Money.fromDouble(-0.51, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(-0.51, defaultCurrency).isOdd;
         const expected = true;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(-1, defaultCurrency).isOdd;
         const expected = false;
         expect(actual, expected);
       });
       test('-1.51${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.51, FiatCurrency.$default).isOdd;
+        final actual = Money.fromDouble(-1.51, defaultCurrency).isOdd;
         const expected = true;
         expect(actual, expected);
       });
@@ -1226,38 +1322,37 @@ void main() {
 
     group('isNegative >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(1.5, defaultCurrency).isNegative;
         const expected = false;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(1, defaultCurrency).isNegative;
         const expected = false;
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(0.01, defaultCurrency).isNegative;
         const expected = false;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(0, defaultCurrency).isNegative;
         const expected = false;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(-0.01, defaultCurrency).isNegative;
         const expected = true;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(-1, defaultCurrency).isNegative;
         const expected = true;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).isNegative;
+        final actual = Money.fromDouble(-1.5, defaultCurrency).isNegative;
         const expected = true;
         expect(actual, expected);
       });
@@ -1265,38 +1360,37 @@ void main() {
 
     group('isPositive >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(1.5, defaultCurrency).isPositive;
         const expected = true;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(1, defaultCurrency).isPositive;
         const expected = true;
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(0.01, defaultCurrency).isPositive;
         const expected = true;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(0, defaultCurrency).isPositive;
         const expected = true;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(-0.01, defaultCurrency).isPositive;
         const expected = false;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(-1, defaultCurrency).isPositive;
         const expected = false;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).isPositive;
+        final actual = Money.fromDouble(-1.5, defaultCurrency).isPositive;
         const expected = false;
         expect(actual, expected);
       });
@@ -1304,322 +1398,317 @@ void main() {
 
     group('abs >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(1.5, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.5, defaultCurrency).abs();
+        final expected = Money.fromDouble(1.5, defaultCurrency);
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1, defaultCurrency).abs();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual = Money.fromDouble(0.99, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(0.99, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.99, defaultCurrency).abs();
+        final expected = Money.fromDouble(0.99, defaultCurrency);
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(0.01, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.01, defaultCurrency).abs();
+        final expected = Money.fromDouble(0.01, defaultCurrency);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0, defaultCurrency).abs();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual = Money.fromDouble(-0.01, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(0.01, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.01, defaultCurrency).abs();
+        final expected = Money.fromDouble(0.01, defaultCurrency);
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual = Money.fromDouble(-0.99, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(0.99, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.99, defaultCurrency).abs();
+        final expected = Money.fromDouble(0.99, defaultCurrency);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1, defaultCurrency).abs();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).abs();
-        final expected = Money.fromDouble(1.5, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.5, defaultCurrency).abs();
+        final expected = Money.fromDouble(1.5, defaultCurrency);
         expect(actual, expected);
       });
     });
 
     group('round >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(2, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.5, defaultCurrency).round();
+        final expected = Money.fromDouble(2, defaultCurrency);
         expect(actual, expected);
       });
       test('1.49${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.49, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.49, defaultCurrency).round();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1, defaultCurrency).round();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('50 cents', () {
-        final actual = Money.fromDouble(0.50, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.50, defaultCurrency).round();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('49 cent', () {
-        final actual = Money.fromDouble(0.49, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.49, defaultCurrency).round();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0, defaultCurrency).round();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-49 cent', () {
-        final actual = Money.fromDouble(-0.49, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.49, defaultCurrency).round();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-50 cents', () {
-        final actual = Money.fromDouble(-0.5, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.5, defaultCurrency).round();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1, defaultCurrency).round();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.49${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.49, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.49, defaultCurrency).round();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).round();
-        final expected = Money.fromDouble(-2, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.5, defaultCurrency).round();
+        final expected = Money.fromDouble(-2, defaultCurrency);
         expect(actual, expected);
       });
     });
 
     group('ceil >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(2, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.5, defaultCurrency).ceil();
+        final expected = Money.fromDouble(2, defaultCurrency);
         expect(actual, expected);
       });
       test('1.49${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.49, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(2, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.49, defaultCurrency).ceil();
+        final expected = Money.fromDouble(2, defaultCurrency);
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1, defaultCurrency).ceil();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('50 cents', () {
-        final actual = Money.fromDouble(0.50, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.50, defaultCurrency).ceil();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('49 cent', () {
-        final actual = Money.fromDouble(0.49, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.49, defaultCurrency).ceil();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0, defaultCurrency).ceil();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-49 cent', () {
-        final actual = Money.fromDouble(-0.49, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.49, defaultCurrency).ceil();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-50 cents', () {
-        final actual = Money.fromDouble(-0.5, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.5, defaultCurrency).ceil();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1, defaultCurrency).ceil();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.49${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.49, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.49, defaultCurrency).ceil();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).ceil();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.5, defaultCurrency).ceil();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
     });
 
     group('floor >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.5, defaultCurrency).floor();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.49${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.49, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1.49, defaultCurrency).floor();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = Money.fromDouble(1, defaultCurrency).floor();
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('50 cents', () {
-        final actual = Money.fromDouble(0.50, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.50, defaultCurrency).floor();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('49 cent', () {
-        final actual = Money.fromDouble(0.49, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0.49, defaultCurrency).floor();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = Money.fromDouble(0, defaultCurrency).floor();
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-49 cent', () {
-        final actual = Money.fromDouble(-0.49, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.49, defaultCurrency).floor();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-50 cents', () {
-        final actual = Money.fromDouble(-0.5, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-0.5, defaultCurrency).floor();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1, defaultCurrency).floor();
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.49${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.49, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(-2, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.49, defaultCurrency).floor();
+        final expected = Money.fromDouble(-2, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).floor();
-        final expected = Money.fromDouble(-2, FiatCurrency.$default);
+        final actual = Money.fromDouble(-1.5, defaultCurrency).floor();
+        final expected = Money.fromDouble(-2, defaultCurrency);
         expect(actual, expected);
       });
     });
 
     group('subtraction >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = -Money.fromDouble(1.5, FiatCurrency.$default);
-        final expected = Money.fromDouble(-1.5, FiatCurrency.$default);
+        final actual = -Money.fromDouble(1.5, defaultCurrency);
+        final expected = Money.fromDouble(-1.5, defaultCurrency);
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = -Money.fromDouble(1, FiatCurrency.$default);
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final actual = -Money.fromDouble(1, defaultCurrency);
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual = -Money.fromDouble(0.99, FiatCurrency.$default);
-        final expected = Money.fromDouble(-0.99, FiatCurrency.$default);
+        final actual = -Money.fromDouble(0.99, defaultCurrency);
+        final expected = Money.fromDouble(-0.99, defaultCurrency);
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = -Money.fromDouble(0.01, FiatCurrency.$default);
-        final expected = Money.fromDouble(-0.01, FiatCurrency.$default);
+        final actual = -Money.fromDouble(0.01, defaultCurrency);
+        final expected = Money.fromDouble(-0.01, defaultCurrency);
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = -Money.fromDouble(0, FiatCurrency.$default);
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final actual = -Money.fromDouble(0, defaultCurrency);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual = -Money.fromDouble(-0.01, FiatCurrency.$default);
-        final expected = Money.fromDouble(0.01, FiatCurrency.$default);
+        final actual = -Money.fromDouble(-0.01, defaultCurrency);
+        final expected = Money.fromDouble(0.01, defaultCurrency);
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual = -Money.fromDouble(-0.99, FiatCurrency.$default);
-        final expected = Money.fromDouble(0.99, FiatCurrency.$default);
+        final actual = -Money.fromDouble(-0.99, defaultCurrency);
+        final expected = Money.fromDouble(0.99, defaultCurrency);
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = -Money.fromDouble(-1, FiatCurrency.$default);
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final actual = -Money.fromDouble(-1, defaultCurrency);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = -Money.fromDouble(-1.5, FiatCurrency.$default);
-        final expected = Money.fromDouble(1.5, FiatCurrency.$default);
+        final actual = -Money.fromDouble(-1.5, defaultCurrency);
+        final expected = Money.fromDouble(1.5, defaultCurrency);
         expect(actual, expected);
       });
     });
 
     group('toDecimal >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(1.5, defaultCurrency).toDecimal();
         final expected = Decimal.parse('1.5');
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(1, defaultCurrency).toDecimal();
         final expected = Decimal.parse('1');
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual =
-            Money.fromDouble(0.99, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(0.99, defaultCurrency).toDecimal();
         final expected = Decimal.parse('0.99');
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual =
-            Money.fromDouble(0.01, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(0.01, defaultCurrency).toDecimal();
         final expected = Decimal.parse('0.01');
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(0, defaultCurrency).toDecimal();
         final expected = Decimal.parse('0.0');
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(-0.01, defaultCurrency).toDecimal();
         final expected = Decimal.parse('-0.01');
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual =
-            Money.fromDouble(-0.99, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(-0.99, defaultCurrency).toDecimal();
         final expected = Decimal.parse('-0.99');
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(-1, defaultCurrency).toDecimal();
         final expected = Decimal.parse('-1');
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual =
-            Money.fromDouble(-1.5, FiatCurrency.$default).toDecimal();
+        final actual = Money.fromDouble(-1.5, defaultCurrency).toDecimal();
         final expected = Decimal.parse('-1.5');
         expect(actual, expected);
       });
@@ -1627,49 +1716,47 @@ void main() {
 
     group('toDouble >', () {
       test('1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1.5, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(1.5, defaultCurrency).toDouble();
         const expected = 1.5;
         expect(actual, expected);
       });
       test('1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(1, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(1, defaultCurrency).toDouble();
         const expected = 1;
         expect(actual, expected);
       });
       test('99 cents', () {
-        final actual = Money.fromDouble(0.99, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(0.99, defaultCurrency).toDouble();
         const expected = 0.99;
         expect(actual, expected);
       });
       test('1 cent', () {
-        final actual = Money.fromDouble(0.01, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(0.01, defaultCurrency).toDouble();
         const expected = 0.01;
         expect(actual, expected);
       });
       test('0 cents', () {
-        final actual = Money.fromDouble(0, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(0, defaultCurrency).toDouble();
         const expected = 0.0;
         expect(actual, expected);
       });
       test('-1 cent', () {
-        final actual =
-            Money.fromDouble(-0.01, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(-0.01, defaultCurrency).toDouble();
         const expected = -0.01;
         expect(actual, expected);
       });
       test('-99 cents', () {
-        final actual =
-            Money.fromDouble(-0.99, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(-0.99, defaultCurrency).toDouble();
         const expected = -0.99;
         expect(actual, expected);
       });
       test('-1${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(-1, defaultCurrency).toDouble();
         const expected = -1;
         expect(actual, expected);
       });
       test('-1.5${defaultCurrency.icon}', () {
-        final actual = Money.fromDouble(-1.5, FiatCurrency.$default).toDouble();
+        final actual = Money.fromDouble(-1.5, defaultCurrency).toDouble();
         const expected = -1.5;
         expect(actual, expected);
       });
@@ -1678,181 +1765,166 @@ void main() {
     group('toString >', () {
       group('MF-RF-DSF >', () {
         test('fixedDouble/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000.10${FiatCurrency.$default.icon}';
+          final expected = '1000.10${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('fixedDouble/space/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.space,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1 000.10${FiatCurrency.$default.icon}';
+          final expected = '1 000.10${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('fixedDouble/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000,10${FiatCurrency.$default.icon}';
+          final expected = '1000,10${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('fixedDouble/space/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.space,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1 000,10${FiatCurrency.$default.icon}';
+          final expected = '1 000,10${defaultCurrency.icon}';
           expect(actual, expected);
         });
 
         test('integer/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.integer,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000${FiatCurrency.$default.icon}';
+          final expected = '1000${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('integer/space/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.integer,
             rankFormat: RankFormat.space,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1 000${FiatCurrency.$default.icon}';
+          final expected = '1 000${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('integer/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.integer,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000${FiatCurrency.$default.icon}';
+          final expected = '1000${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('integer/space/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.integer,
             rankFormat: RankFormat.space,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1 000${FiatCurrency.$default.icon}';
+          final expected = '1 000${defaultCurrency.icon}';
           expect(actual, expected);
         });
 
         test('flexibleDouble/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.flexibleDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000.1${FiatCurrency.$default.icon}';
+          final expected = '1000.1${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('flexibleDouble/space/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.flexibleDouble,
             rankFormat: RankFormat.space,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1 000.1${FiatCurrency.$default.icon}';
+          final expected = '1 000.1${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('flexibleDouble/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.flexibleDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000,1${FiatCurrency.$default.icon}';
+          final expected = '1000,1${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('flexibleDouble/space/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.flexibleDouble,
             rankFormat: RankFormat.space,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1 000,1${FiatCurrency.$default.icon}';
+          final expected = '1 000,1${defaultCurrency.icon}';
           expect(actual, expected);
         });
       });
 
       group('CP-CF-DSF >', () {
         test('start/icon/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.start,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '${FiatCurrency.$default.icon}1000.10';
+          final expected = '${defaultCurrency.icon}1000.10';
           expect(actual, expected);
         });
         test('start/code/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.start,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '${FiatCurrency.$default.code}1000.10';
+          final expected = '${defaultCurrency.code}1000.10';
           expect(actual, expected);
         });
         test('start/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.start,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -1863,32 +1935,29 @@ void main() {
           expect(actual, expected);
         });
         test('start/icon/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.start,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '${FiatCurrency.$default.icon}1000,10';
+          final expected = '${defaultCurrency.icon}1000,10';
           expect(actual, expected);
         });
         test('start/code/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.start,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '${FiatCurrency.$default.code}1000,10';
+          final expected = '${defaultCurrency.code}1000,10';
           expect(actual, expected);
         });
         test('start/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.start,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -1900,32 +1969,29 @@ void main() {
         });
 
         test('startSpaced/icon/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.startSpaced,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '${FiatCurrency.$default.icon} 1000.10';
+          final expected = '${defaultCurrency.icon} 1000.10';
           expect(actual, expected);
         });
         test('startSpaced/code/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.startSpaced,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '${FiatCurrency.$default.code} 1000.10';
+          final expected = '${defaultCurrency.code} 1000.10';
           expect(actual, expected);
         });
         test('startSpaced/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.startSpaced,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -1936,32 +2002,29 @@ void main() {
           expect(actual, expected);
         });
         test('startSpaced/icon/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.startSpaced,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '${FiatCurrency.$default.icon} 1000,10';
+          final expected = '${defaultCurrency.icon} 1000,10';
           expect(actual, expected);
         });
         test('startSpaced/code/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.startSpaced,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '${FiatCurrency.$default.code} 1000,10';
+          final expected = '${defaultCurrency.code} 1000,10';
           expect(actual, expected);
         });
         test('startSpaced/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.startSpaced,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -1973,32 +2036,29 @@ void main() {
         });
 
         test('end/icon/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000.10${FiatCurrency.$default.icon}';
+          final expected = '1000.10${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('end/code/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000.10${FiatCurrency.$default.code}';
+          final expected = '1000.10${defaultCurrency.code}';
           expect(actual, expected);
         });
         test('end/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -2009,32 +2069,29 @@ void main() {
           expect(actual, expected);
         });
         test('end/icon/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000,10${FiatCurrency.$default.icon}';
+          final expected = '1000,10${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('end/code/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000,10${FiatCurrency.$default.code}';
+          final expected = '1000,10${defaultCurrency.code}';
           expect(actual, expected);
         });
         test('end/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.end,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -2046,32 +2103,29 @@ void main() {
         });
 
         test('endSpaced/icon/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.endSpaced,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000.10 ${FiatCurrency.$default.icon}';
+          final expected = '1000.10 ${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('endSpaced/code/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.endSpaced,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000.10 ${FiatCurrency.$default.code}';
+          final expected = '1000.10 ${defaultCurrency.code}';
           expect(actual, expected);
         });
         test('endSpaced/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.endSpaced,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -2082,32 +2136,29 @@ void main() {
           expect(actual, expected);
         });
         test('endSpaced/icon/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.endSpaced,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000,10 ${FiatCurrency.$default.icon}';
+          final expected = '1000,10 ${defaultCurrency.icon}';
           expect(actual, expected);
         });
         test('endSpaced/code/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.endSpaced,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000,10 ${FiatCurrency.$default.code}';
+          final expected = '1000,10 ${defaultCurrency.code}';
           expect(actual, expected);
         });
         test('endSpaced/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.endSpaced,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -2119,32 +2170,29 @@ void main() {
         });
 
         test('decimalSeparator/icon/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.decimalSeparator,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000${FiatCurrency.$default.icon}10';
+          final expected = '1000${defaultCurrency.icon}10';
           expect(actual, expected);
         });
         test('decimalSeparator/code/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.decimalSeparator,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.point,
           );
-          final expected = '1000${FiatCurrency.$default.code}10';
+          final expected = '1000${defaultCurrency.code}10';
           expect(actual, expected);
         });
         test('decimalSeparator/none/point', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.decimalSeparator,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -2155,32 +2203,29 @@ void main() {
           expect(actual, expected);
         });
         test('decimalSeparator/icon/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.decimalSeparator,
             currencyFormat: FiatCurrencyFormat.icon,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000${FiatCurrency.$default.icon}10';
+          final expected = '1000${defaultCurrency.icon}10';
           expect(actual, expected);
         });
         test('decimalSeparator/code/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.decimalSeparator,
             currencyFormat: FiatCurrencyFormat.code,
             moneyFormat: MoneyFormat.fixedDouble,
             rankFormat: RankFormat.none,
             decimalSeparatorFormat: DecimalSeparatorFormat.comma,
           );
-          final expected = '1000${FiatCurrency.$default.code}10';
+          final expected = '1000${defaultCurrency.code}10';
           expect(actual, expected);
         });
         test('decimalSeparator/none/comma', () {
-          final actual =
-              Money.fromDouble(1000.1, FiatCurrency.$default).toString(
+          final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
             currencyPosition: CurrencyPosition.decimalSeparator,
             currencyFormat: FiatCurrencyFormat.none,
             moneyFormat: MoneyFormat.fixedDouble,
@@ -2197,112 +2242,112 @@ void main() {
   group('Money binary operations tests >', () {
     group('addition >', () {
       test('0 + 0', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 + 0.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 + 1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 + 1.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 + 0.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 + 1.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(2.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(2.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 + 0.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(1.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.2, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 + 1.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(2.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(2.2, defaultCurrency);
         expect(actual, expected);
       });
       test('0 + -0.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 + -1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(-1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 + -1.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 + -0.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(0.9, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.9, defaultCurrency);
         expect(actual, expected);
       });
       test('1 + -1.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 + -0.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 + -1.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 + amount2;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         Money actual() => amount1 + amount2;
         final expected =
@@ -2313,287 +2358,287 @@ void main() {
 
     group('subtraction >', () {
       test('0 - 0', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 - 0.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 - 1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 - 1.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - 0', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - 0.1', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - 1', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-0.9, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.9, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - 1.1', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - 0', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - 0.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0.9, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.9, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - 1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - 1.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - 0', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - 0.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - 1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - 1.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 - -0.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 - -1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(-1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('0 - -1.1', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - -0.1', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(0.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.2, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - -1', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 - -1.1', () {
-        final amount1 = Money.fromDouble(0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.2, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - -0.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - -1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(2, FiatCurrency.$default);
+        final expected = Money.fromDouble(2, defaultCurrency);
         expect(actual, expected);
       });
       test('1 - -1.1', () {
-        final amount1 = Money.fromDouble(1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(2.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(2.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - -0.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(1.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.2, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - -1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(2.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(2.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 - -1.1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(-1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(2.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(2.2, defaultCurrency);
         expect(actual, expected);
       });
       test('-0.1 - 0', () {
-        final amount1 = Money.fromDouble(-0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('-0.1 - 0.1', () {
-        final amount1 = Money.fromDouble(-0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-0.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.2, defaultCurrency);
         expect(actual, expected);
       });
       test('-0.1 - 1', () {
-        final amount1 = Money.fromDouble(-0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('-0.1 - 1.1', () {
-        final amount1 = Money.fromDouble(-0.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-0.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.2, defaultCurrency);
         expect(actual, expected);
       });
       test('-1 - 0', () {
-        final amount1 = Money.fromDouble(-1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1 - 0.1', () {
-        final amount1 = Money.fromDouble(-1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1 - 1', () {
-        final amount1 = Money.fromDouble(-1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-2, FiatCurrency.$default);
+        final expected = Money.fromDouble(-2, defaultCurrency);
         expect(actual, expected);
       });
       test('-1 - 1.1', () {
-        final amount1 = Money.fromDouble(-1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-2.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-2.1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.1 - 0', () {
-        final amount1 = Money.fromDouble(-1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.1 - 0.1', () {
-        final amount1 = Money.fromDouble(-1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(0.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-1.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.2, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.1 - 1', () {
-        final amount1 = Money.fromDouble(-1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-2.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-2.1, defaultCurrency);
         expect(actual, expected);
       });
       test('-1.1 - 1.1', () {
-        final amount1 = Money.fromDouble(-1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(-1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 - amount2;
-        final expected = Money.fromDouble(-2.2, FiatCurrency.$default);
+        final expected = Money.fromDouble(-2.2, defaultCurrency);
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         Money actual() => amount1 - amount2;
         final expected =
@@ -2604,128 +2649,128 @@ void main() {
 
     group('multiplication >', () {
       test('0 * 0', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 0.0;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 * 0.1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 0.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 * 1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 1.0;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 * 1.1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 1.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('1 * 0.1', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = 0.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 * 1.1', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = 1.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 * 0.1', () {
-        final amount = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.1, defaultCurrency);
         const coef = 0.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0.11, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.11, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 * 1.1', () {
-        final amount = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.1, defaultCurrency);
         const coef = 1.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(1.21, FiatCurrency.$default);
+        final expected = Money.fromDouble(1.21, defaultCurrency);
         expect(actual, expected);
       });
       test('0 * -0.1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = -0.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 * -1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = -1.0;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 * -1.1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = -1.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('1 * -0.1', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = -0.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(-0.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1 * -1.1', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = -1.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(-1.1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.1, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 * -0.1', () {
-        final amount = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.1, defaultCurrency);
         const coef = -0.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(-0.11, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.11, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 * -1.1', () {
-        final amount = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.1, defaultCurrency);
         const coef = -1.1;
         final actual = amount * coef;
-        final expected = Money.fromDouble(-1.21, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1.21, defaultCurrency);
         expect(actual, expected);
       });
       test('ceil rounding', () {
-        final amount = Money.fromDouble(123.45, FiatCurrency.$default);
+        final amount = Money.fromDouble(123.45, defaultCurrency);
         const coef = 1.24;
         final actual = amount * coef;
-        final expected = Money.fromDouble(153.078, FiatCurrency.$default);
+        final expected = Money.fromDouble(153.078, defaultCurrency);
         expect(expected.toDouble(), 153.08);
         expect(actual, expected);
       });
       test('floor rounding', () {
-        final amount = Money.fromDouble(123.45, FiatCurrency.$default);
+        final amount = Money.fromDouble(123.45, defaultCurrency);
         const coef = 0.23;
         final actual = amount * coef;
-        final expected = Money.fromDouble(28.3935, FiatCurrency.$default);
+        final expected = Money.fromDouble(28.3935, defaultCurrency);
         expect(expected.toDouble(), 28.39);
         expect(actual, expected);
       });
       test('Infinite', () {
-        final amount = Money.fromDouble(maxFinite, FiatCurrency.$default);
+        final amount = Money.fromDouble(maxFinite, defaultCurrency);
         const coef = double.infinity;
         Money actual() => amount * coef;
         final expected = throwsA(const TypeMatcher<InfiniteNumberException>());
@@ -2735,198 +2780,198 @@ void main() {
 
     group('division >', () {
       test('0 / 0 (NaN)', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 0.0;
         Money actual() => amount / coef;
         final expected = throwsA(const TypeMatcher<NotANumberException>());
         expect(actual, expected);
       });
       test('0 / 0.1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 / 2', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 / 1.25', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = 1.25;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 / 0.1', () {
-        final amount = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(0.1, defaultCurrency);
         const coef = 0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(1, FiatCurrency.$default);
+        final expected = Money.fromDouble(1, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 / 2', () {
-        final amount = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(0.1, defaultCurrency);
         const coef = 2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0.05, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.05, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 / 1.25', () {
-        final amount = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(0.1, defaultCurrency);
         const coef = 1.25;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0.08, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.08, defaultCurrency);
         expect(actual, expected);
       });
       test('1 / 0.1', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = 0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(10, FiatCurrency.$default);
+        final expected = Money.fromDouble(10, defaultCurrency);
         expect(actual, expected);
       });
       test('1 / 2', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = 2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0.5, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.5, defaultCurrency);
         expect(actual, expected);
       });
       test('1 / 1.25', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = 1.25;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0.8, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.8, defaultCurrency);
         expect(actual, expected);
       });
       test('1.25 / 0.1', () {
-        final amount = Money.fromDouble(1.25, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.25, defaultCurrency);
         const coef = 0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(12.5, FiatCurrency.$default);
+        final expected = Money.fromDouble(12.5, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 / 2', () {
-        final amount = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.1, defaultCurrency);
         const coef = 2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0.55, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.55, defaultCurrency);
         expect(actual, expected);
       });
       test('4.5 / 1.5', () {
-        final amount = Money.fromDouble(4.5, FiatCurrency.$default);
+        final amount = Money.fromDouble(4.5, defaultCurrency);
         const coef = 1.5;
         final actual = amount / coef;
-        final expected = Money.fromDouble(3, FiatCurrency.$default);
+        final expected = Money.fromDouble(3, defaultCurrency);
         expect(actual, expected);
       });
       test('0 / -0.1', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = -0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 / -2', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = -2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0 / -1.25', () {
-        final amount = Money.fromDouble(0, FiatCurrency.$default);
+        final amount = Money.fromDouble(0, defaultCurrency);
         const coef = -1.25;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0, FiatCurrency.$default);
+        final expected = Money.fromDouble(0, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 / -0.1', () {
-        final amount = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(0.1, defaultCurrency);
         const coef = -0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-1, FiatCurrency.$default);
+        final expected = Money.fromDouble(-1, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 / -2', () {
-        final amount = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(0.1, defaultCurrency);
         const coef = -2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-0.05, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.05, defaultCurrency);
         expect(actual, expected);
       });
       test('0.1 / -1.25', () {
-        final amount = Money.fromDouble(0.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(0.1, defaultCurrency);
         const coef = -1.25;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-0.08, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.08, defaultCurrency);
         expect(actual, expected);
       });
       test('1 / -0.1', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = -0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-10, FiatCurrency.$default);
+        final expected = Money.fromDouble(-10, defaultCurrency);
         expect(actual, expected);
       });
       test('1 / -2', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = -2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-0.5, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.5, defaultCurrency);
         expect(actual, expected);
       });
       test('1 / -1.25', () {
-        final amount = Money.fromDouble(1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1, defaultCurrency);
         const coef = -1.25;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-0.8, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.8, defaultCurrency);
         expect(actual, expected);
       });
       test('1.25 / -0.1', () {
-        final amount = Money.fromDouble(1.25, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.25, defaultCurrency);
         const coef = -0.1;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-12.5, FiatCurrency.$default);
+        final expected = Money.fromDouble(-12.5, defaultCurrency);
         expect(actual, expected);
       });
       test('1.1 / -2', () {
-        final amount = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.1, defaultCurrency);
         const coef = -2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-0.55, FiatCurrency.$default);
+        final expected = Money.fromDouble(-0.55, defaultCurrency);
         expect(actual, expected);
       });
       test('4.5 / -1.5', () {
-        final amount = Money.fromDouble(4.5, FiatCurrency.$default);
+        final amount = Money.fromDouble(4.5, defaultCurrency);
         const coef = -1.5;
         final actual = amount / coef;
-        final expected = Money.fromDouble(-3, FiatCurrency.$default);
+        final expected = Money.fromDouble(-3, defaultCurrency);
         expect(actual, expected);
       });
       test('ceil rounding', () {
-        final amount = Money.fromDouble(4.55, FiatCurrency.$default);
+        final amount = Money.fromDouble(4.55, defaultCurrency);
         const coef = 2.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(2.275, FiatCurrency.$default);
+        final expected = Money.fromDouble(2.275, defaultCurrency);
         expect(expected.toDouble(), 2.28);
         expect(actual, expected);
       });
       test('floor rounding', () {
-        final amount = Money.fromDouble(1.45, FiatCurrency.$default);
+        final amount = Money.fromDouble(1.45, defaultCurrency);
         const coef = 3.0;
         final actual = amount / coef;
-        final expected = Money.fromDouble(0.48333333333, FiatCurrency.$default);
+        final expected = Money.fromDouble(0.48333333333, defaultCurrency);
         expect(expected.toDouble(), 0.48);
         expect(actual, expected);
       });
       test('Infinite', () {
-        final amount = Money.fromDouble(maxFinite, FiatCurrency.$default);
+        final amount = Money.fromDouble(maxFinite, defaultCurrency);
         const coef = double.infinity;
         Money actual() => amount / coef;
         final expected = throwsA(const TypeMatcher<InfiniteNumberException>());
@@ -2936,28 +2981,28 @@ void main() {
 
     group('less than (<) >', () {
       test('less', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(2.2, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(2.2, defaultCurrency);
         final actual = amount1 < amount2;
         const expected = true;
         expect(actual, expected);
       });
       test('equal', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 < amount2;
         const expected = false;
         expect(actual, expected);
       });
       test('greater', () {
-        final amount1 = Money.fromDouble(2.2, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(2.2, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 < amount2;
         const expected = false;
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         bool actual() => amount1 < amount2;
         final expected =
@@ -2968,28 +3013,28 @@ void main() {
 
     group('less than or equal (<=) >', () {
       test('less', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(2.2, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(2.2, defaultCurrency);
         final actual = amount1 <= amount2;
         const expected = true;
         expect(actual, expected);
       });
       test('equal', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 <= amount2;
         const expected = true;
         expect(actual, expected);
       });
       test('greater', () {
-        final amount1 = Money.fromDouble(2.2, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(2.2, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 <= amount2;
         const expected = false;
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         bool actual() => amount1 <= amount2;
         final expected =
@@ -3000,28 +3045,28 @@ void main() {
 
     group('greater than (>) >', () {
       test('less', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(2.2, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(2.2, defaultCurrency);
         final actual = amount1 > amount2;
         const expected = false;
         expect(actual, expected);
       });
       test('equal', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 > amount2;
         const expected = false;
         expect(actual, expected);
       });
       test('greater', () {
-        final amount1 = Money.fromDouble(2.2, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(2.2, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 > amount2;
         const expected = true;
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         bool actual() => amount1 > amount2;
         final expected =
@@ -3032,28 +3077,28 @@ void main() {
 
     group('greater than or equal (>=) >', () {
       test('less', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(2.2, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(2.2, defaultCurrency);
         final actual = amount1 >= amount2;
         const expected = false;
         expect(actual, expected);
       });
       test('equal', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 >= amount2;
         const expected = true;
         expect(actual, expected);
       });
       test('greater', () {
-        final amount1 = Money.fromDouble(2.2, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(2.2, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1 >= amount2;
         const expected = true;
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         bool actual() => amount1 >= amount2;
         final expected =
@@ -3064,28 +3109,28 @@ void main() {
 
     group('compareTo >', () {
       test('-1', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(2.2, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(2.2, defaultCurrency);
         final actual = amount1.compareTo(amount2);
         const expected = -1;
         expect(actual, expected);
       });
       test('0', () {
-        final amount1 = Money.fromDouble(1.1, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(1.1, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1.compareTo(amount2);
         const expected = 0;
         expect(actual, expected);
       });
       test('+1', () {
-        final amount1 = Money.fromDouble(2.2, FiatCurrency.$default);
-        final amount2 = Money.fromDouble(1.1, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(2.2, defaultCurrency);
+        final amount2 = Money.fromDouble(1.1, defaultCurrency);
         final actual = amount1.compareTo(amount2);
         const expected = 1;
         expect(actual, expected);
       });
       test('Currency mismatch', () {
-        final amount1 = Money.fromDouble(0, FiatCurrency.$default);
+        final amount1 = Money.fromDouble(0, defaultCurrency);
         final amount2 = Money.fromDouble(0, otherCurrency);
         int actual() => amount1.compareTo(amount2);
         final expected =

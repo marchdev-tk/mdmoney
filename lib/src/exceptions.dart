@@ -26,3 +26,9 @@ class InfiniteNumberException implements MoneyException {
 
   String get message => 'Money amount must be finite!';
 }
+
+class NegativePrecisionException implements MoneyException {
+  const NegativePrecisionException();
+
+  String get message => 'Precision must be greater than or equals to zero!';
+}
