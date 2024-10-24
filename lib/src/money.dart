@@ -7,7 +7,7 @@ import 'fiat_currency.dart';
 import 'exceptions.dart';
 import 'formats.dart';
 
-/// Objects that stores amount and currency and provides methods to operate with
+/// Object that stores amount and currency and provides methods to operate with
 /// this amount and currency.
 @immutable
 class Money implements Comparable<Money> {
@@ -15,7 +15,7 @@ class Money implements Comparable<Money> {
   ///
   /// Internal contructor.
   const Money._(this.cents, this.currency, this.precision)
-      : assert(precision == null || precision >= 0);
+      : assert(precision >= 0);
 
   /// Constructs an instance of the [Money] from cent amount and [FiatCurrency].
   factory Money.fromCents(
@@ -27,7 +27,8 @@ class Money implements Comparable<Money> {
       throw const NegativePrecisionException();
     }
 
-    return Money._(BigInt.from(cents), currency, precision);
+    final adjustedPrecision = precision ?? currency.precision;
+    return Money._(BigInt.from(cents), currency, adjustedPrecision);
   }
 
   /// Constructs an instance of the [Money] from decimal amount and [FiatCurrency].
@@ -40,9 +41,10 @@ class Money implements Comparable<Money> {
       throw const NegativePrecisionException();
     }
 
-    final centModifier = _centModifier(precision ?? currency.precision);
+    final adjustedPrecision = precision ?? currency.precision;
+    final centModifier = _centModifier(adjustedPrecision);
     final cents = (amount * Decimal.fromInt(centModifier)).round();
-    return Money._(cents.toBigInt(), currency, precision);
+    return Money._(cents.toBigInt(), currency, adjustedPrecision);
   }
 
   /// Constructs an instance of the [Money] from double amount and [FiatCurrency].
@@ -55,14 +57,15 @@ class Money implements Comparable<Money> {
       throw const NegativePrecisionException();
     }
 
-    final centModifier = _centModifier(precision ?? currency.precision);
+    final adjustedPrecision = precision ?? currency.precision;
+    final centModifier = _centModifier(adjustedPrecision);
     final cents = (amount * centModifier).roundToDouble();
 
     if (cents.isInfinite) {
       throw const InfiniteNumberException();
     }
 
-    return Money._(BigInt.from(cents), currency, precision);
+    return Money._(BigInt.from(cents), currency, adjustedPrecision);
   }
 
   /// Constructs an instance of the [Money] from string and [FiatCurrency].
@@ -82,10 +85,13 @@ class Money implements Comparable<Money> {
     if (currencyAdjusted == null) {
       throw const NoCurrencyException();
     }
+
+    final adjustedPrecision = precision ?? currencyAdjusted.precision;
+
     if (amount.isEmpty ||
         amount == currencyAdjusted.icon ||
         amount == currencyAdjusted.code) {
-      return Money.zeroOf(currencyAdjusted, precision: precision);
+      return Money.zeroOf(currencyAdjusted, precision: adjustedPrecision);
     }
 
     var internalAmount = amount.replaceAll(' ', '').replaceAll(',', '.');
@@ -108,7 +114,7 @@ class Money implements Comparable<Money> {
     return Money.fromDecimal(
       decimalAmount,
       currencyAdjusted,
-      precision: precision,
+      precision: adjustedPrecision,
     );
   }
 
@@ -127,7 +133,6 @@ class Money implements Comparable<Money> {
   static final one = Money.fromDouble(1, FiatCurrency.$default);
 
   static int _centModifier(int precision) => math.pow(10, precision).toInt();
-  int get _precision => precision ?? currency.precision;
 
   /// Current amount in cents.
   final BigInt cents;
@@ -137,12 +142,11 @@ class Money implements Comparable<Money> {
 
   /// Custom precision to use with this amount.
   ///
-  /// Defaults to `null`, and therefore for precision will be used
-  /// [currency.precision], otherwise - value of this field will be used.
+  /// If not specified explicitly, defaults to [currency.precision].
   ///
   /// *Please note* that precision cannot be negative, if so -
   /// [NegativePrecisionException] will be thrown.
-  final int? precision;
+  final int precision;
 
   /// Returns the sign of this amount.
   ///
@@ -182,22 +186,22 @@ class Money implements Comparable<Money> {
       this <= Money.zeroOf(currency, precision: precision);
 
   /// Gets integer part of the current amount.
-  BigInt get integer => cents ~/ BigInt.from(_centModifier(_precision));
+  BigInt get integer => cents ~/ BigInt.from(_centModifier(precision));
 
   /// Gets fractional part as cents.
   ///
   /// Where possible values starts with [0] and precision of fraction is
   /// defined in either [precision], if provided, or [currency.precision].
   BigInt get fractional {
-    if (_precision == 0) {
+    if (precision == 0) {
       return BigInt.zero;
     }
 
     if (cents.isNegative) {
-      return -(cents.abs() % BigInt.from(_centModifier(_precision)));
+      return -(cents.abs() % BigInt.from(_centModifier(precision)));
     }
 
-    return cents % BigInt.from(_centModifier(_precision));
+    return cents % BigInt.from(_centModifier(precision));
   }
 
   /// Gets fractional part as decimal value.
@@ -205,11 +209,11 @@ class Money implements Comparable<Money> {
   /// Where possible values starts with [0.0] and precision of fraction is
   /// defined in either [precision], if provided, or [currency.precision].
   Decimal get fractionalDecimal {
-    if (_precision == 0) {
+    if (precision == 0) {
       return Decimal.zero;
     }
 
-    final centModifier = _centModifier(_precision);
+    final centModifier = _centModifier(precision);
     return (Decimal.fromBigInt(fractional) / Decimal.fromInt(centModifier))
         .toDecimal();
   }
@@ -222,7 +226,7 @@ class Money implements Comparable<Money> {
 
   /// Gets decimal representation of the current amount.
   Decimal toDecimal() {
-    final centModifier = _centModifier(_precision);
+    final centModifier = _centModifier(precision);
     return (Decimal.fromBigInt(cents) / Decimal.fromInt(centModifier))
         .toDecimal();
   }
@@ -259,7 +263,7 @@ class Money implements Comparable<Money> {
     final addition = isPositive ? BigInt.one : BigInt.zero;
 
     return Money._(
-      (integer + addition) * BigInt.from(_centModifier(_precision)),
+      (integer + addition) * BigInt.from(_centModifier(precision)),
       currency,
       precision,
     );
@@ -276,7 +280,7 @@ class Money implements Comparable<Money> {
     final substraction = isPositive ? BigInt.zero : BigInt.one;
 
     return Money._(
-      (integer - substraction) * BigInt.from(_centModifier(_precision)),
+      (integer - substraction) * BigInt.from(_centModifier(precision)),
       currency,
       precision,
     );

@@ -3,8 +3,12 @@ import 'package:mdmoney/mdmoney.dart';
 final _doubleRegex = RegExp(r'^(-?)(0|([1-9][0-9]*))(\.[0-9]{1,})?$');
 final _doubleRankedRegex = RegExp(r'^(-?)(0|([1-9][0-9 ]*))(\.[0-9]{1,})?$');
 
+abstract interface class MoneyFormatterInteface<T> {
+  String format(T value);
+}
+
 /// Describes possible decimal separator formats.
-enum DecimalSeparatorFormat {
+enum DecimalSeparatorFormat implements MoneyFormatterInteface<String> {
   /// Decimal point.
   point,
 
@@ -18,6 +22,7 @@ enum DecimalSeparatorFormat {
   ///
   /// * contain only numbers and rank symbol
   /// * decimal separator must be `.`
+  @override
   String format(String amount) {
     if (!_doubleRankedRegex.hasMatch(amount)) {
       throw ArgumentError.value(
@@ -38,7 +43,7 @@ enum DecimalSeparatorFormat {
 }
 
 /// Describes possible rank formatting options.
-enum RankFormat {
+enum RankFormat implements MoneyFormatterInteface<String> {
   /// Amount will not be formatted.
   none,
 
@@ -53,6 +58,7 @@ enum RankFormat {
   ///
   /// * contain only numbers
   /// * decimal separator must be `.`
+  @override
   String format(String amount) {
     if (!_doubleRegex.hasMatch(amount)) {
       throw ArgumentError.value(
@@ -106,7 +112,7 @@ enum RankFormat {
 }
 
 /// Describes possible [Money] formatting options.
-enum MoneyFormat {
+enum MoneyFormat implements MoneyFormatterInteface<Money> {
   /// [Money] value will be formatted as an integer truncating any fractional
   /// parts.
   ///
@@ -128,6 +134,7 @@ enum MoneyFormat {
   fixedDouble;
 
   /// Formats [Money].
+  @override
   String format(Money value, [int? precision]) {
     switch (this) {
       case integer:
@@ -139,8 +146,7 @@ enum MoneyFormat {
           return value.toDecimal().toString();
         }
       case fixedDouble:
-        final adjustedPrecision =
-            precision ?? value.precision ?? value.currency.precision;
+        final adjustedPrecision = precision ?? value.precision;
 
         if (adjustedPrecision < 0) {
           throw const NegativePrecisionException();
@@ -152,7 +158,7 @@ enum MoneyFormat {
 }
 
 /// Describes possible [FiatCurrency] formatting options.
-enum FiatCurrencyFormat {
+enum FiatCurrencyFormat implements MoneyFormatterInteface<FiatCurrency> {
   /// [FiatCurrency] value will not be used at all.
   none,
 
@@ -167,6 +173,7 @@ enum FiatCurrencyFormat {
   icon;
 
   /// Formats [FiatCurrency].
+  @override
   String format(FiatCurrency value) {
     switch (this) {
       case code:
