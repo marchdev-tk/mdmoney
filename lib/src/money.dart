@@ -24,7 +24,7 @@ class Money implements Comparable<Money> {
     int? precision,
   }) {
     if (precision != null && precision < 0) {
-      throw NegativePrecisionException();
+      throw const NegativePrecisionException();
     }
 
     return Money._(BigInt.from(cents), currency, precision);
@@ -37,7 +37,7 @@ class Money implements Comparable<Money> {
     int? precision,
   }) {
     if (precision != null && precision < 0) {
-      throw NegativePrecisionException();
+      throw const NegativePrecisionException();
     }
 
     final centModifier = _centModifier(precision ?? currency.precision);
@@ -52,7 +52,7 @@ class Money implements Comparable<Money> {
     int? precision,
   }) {
     if (precision != null && precision < 0) {
-      throw NegativePrecisionException();
+      throw const NegativePrecisionException();
     }
 
     final centModifier = _centModifier(precision ?? currency.precision);
@@ -72,7 +72,7 @@ class Money implements Comparable<Money> {
     int? precision,
   }) {
     if (precision != null && precision < 0) {
-      throw NegativePrecisionException();
+      throw const NegativePrecisionException();
     }
 
     final currencyFromAmount =
@@ -289,7 +289,11 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return Money._(cents + other.cents, currency, precision);
+    return Money.fromDecimal(
+      toDecimal() + other.toDecimal(),
+      currency,
+      precision: precision,
+    );
   }
 
   Money operator -(Money other) {
@@ -297,7 +301,11 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return Money._(cents - other.cents, currency, precision);
+    return Money.fromDecimal(
+      toDecimal() - other.toDecimal(),
+      currency,
+      precision: precision,
+    );
   }
 
   // ! Possibly change from double to dynamic to support double and Decimal
@@ -332,7 +340,7 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return cents < other.cents;
+    return toDecimal() < other.toDecimal();
   }
 
   bool operator <=(Money other) {
@@ -340,7 +348,7 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return cents <= other.cents;
+    return toDecimal() <= other.toDecimal();
   }
 
   bool operator >(Money other) {
@@ -348,7 +356,7 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return cents > other.cents;
+    return toDecimal() > other.toDecimal();
   }
 
   bool operator >=(Money other) {
@@ -356,7 +364,7 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    return cents >= other.cents;
+    return toDecimal() >= other.toDecimal();
   }
 
   @override
@@ -365,11 +373,12 @@ class Money implements Comparable<Money> {
         other is Money &&
             runtimeType == other.runtimeType &&
             cents == other.cents &&
-            currency == other.currency;
+            currency == other.currency &&
+            precision == other.precision;
   }
 
   @override
-  int get hashCode => cents.hashCode ^ currency.hashCode;
+  int get hashCode => cents.hashCode ^ currency.hashCode ^ precision.hashCode;
 
   @override
   int compareTo(Money other) {
@@ -377,9 +386,9 @@ class Money implements Comparable<Money> {
       throw const CurrencyMismatchException();
     }
 
-    if (cents < other.cents) {
+    if (toDecimal() < other.toDecimal()) {
       return -1;
-    } else if (cents > other.cents) {
+    } else if (toDecimal() > other.toDecimal()) {
       return 1;
     } else {
       return 0;

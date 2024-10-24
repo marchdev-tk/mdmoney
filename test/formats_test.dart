@@ -5,42 +5,37 @@ void main() {
   group('DecimalSeparatorFormat >', () {
     group('Exceptions >', () {
       test('empty', () {
-        String actual() => RankFormat.none.format('');
+        String actual() => DecimalSeparatorFormat.point.format('');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
       test('comma separated', () {
-        String actual() => RankFormat.none.format('1234,5');
+        String actual() => DecimalSeparatorFormat.point.format('1234,5');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
       test('comma separated with too much fractionals', () {
-        String actual() => RankFormat.none.format('1234,567');
+        String actual() => DecimalSeparatorFormat.point.format('1234,567');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
       test('integer with decimal point', () {
-        String actual() => RankFormat.none.format('123.');
+        String actual() => DecimalSeparatorFormat.point.format('123.');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
       test('decimal point', () {
-        String actual() => RankFormat.none.format('.');
+        String actual() => DecimalSeparatorFormat.point.format('.');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
       test('decimal point and fractionals', () {
-        String actual() => RankFormat.none.format('.23');
+        String actual() => DecimalSeparatorFormat.point.format('.23');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
       test('decimal point and too much fractionals', () {
-        String actual() => RankFormat.none.format('.234');
-        final expected = throwsA(const TypeMatcher<ArgumentError>());
-        expect(actual, expected);
-      });
-      test('too much fractionals', () {
-        String actual() => RankFormat.none.format('1.234');
+        String actual() => DecimalSeparatorFormat.point.format('.234');
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
@@ -150,11 +145,6 @@ void main() {
         final expected = throwsA(const TypeMatcher<ArgumentError>());
         expect(actual, expected);
       });
-      test('too much fractionals', () {
-        String actual() => RankFormat.none.format('1.234');
-        final expected = throwsA(const TypeMatcher<ArgumentError>());
-        expect(actual, expected);
-      });
     });
 
     group('None >', () {
@@ -234,6 +224,11 @@ void main() {
         test('12345678.85', () {
           final actual = RankFormat.none.format('12345678.85');
           const expected = '12345678.85';
+          expect(actual, expected);
+        });
+        test('1234.857562', () {
+          final actual = RankFormat.none.format('1234.857562');
+          const expected = '1234.857562';
           expect(actual, expected);
         });
       });
@@ -318,6 +313,11 @@ void main() {
           const expected = '12 345 678.85';
           expect(actual, expected);
         });
+        test('1234.857562', () {
+          final actual = RankFormat.space.format('1234.857562');
+          const expected = '1 234.857562';
+          expect(actual, expected);
+        });
       });
     });
   });
@@ -342,6 +342,12 @@ void main() {
         const expected = '1234';
         expect(actual, expected);
       });
+      test('1234.56789, precision 4', () {
+        final actual = MoneyFormat.integer.format(
+            Money.fromDouble(1234.56789, FiatCurrency.$default, precision: 4));
+        const expected = '1234';
+        expect(actual, expected);
+      });
     });
 
     group('fixedDouble >', () {
@@ -363,6 +369,12 @@ void main() {
         const expected = '1234.56';
         expect(actual, expected);
       });
+      test('1234.56789, precision 4', () {
+        final actual = MoneyFormat.fixedDouble.format(
+            Money.fromDouble(1234.56789, FiatCurrency.$default, precision: 4));
+        const expected = '1234.5679';
+        expect(actual, expected);
+      });
     });
 
     group('flexibleDouble >', () {
@@ -382,6 +394,12 @@ void main() {
         final actual = MoneyFormat.flexibleDouble
             .format(Money.fromDouble(1234.56, FiatCurrency.$default));
         const expected = '1234.56';
+        expect(actual, expected);
+      });
+      test('1234.567, precision 4', () {
+        final actual = MoneyFormat.flexibleDouble.format(
+            Money.fromDouble(1234.567, FiatCurrency.$default, precision: 4));
+        const expected = '1234.567';
         expect(actual, expected);
       });
     });

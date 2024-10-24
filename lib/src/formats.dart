@@ -1,7 +1,7 @@
 import 'package:mdmoney/mdmoney.dart';
 
-final _doubleRegex = RegExp(r'^(-?)(0|([1-9][0-9]*))(\.[0-9]{1,2})?$');
-final _doubleRankedRegex = RegExp(r'^(-?)(0|([1-9][0-9 ]*))(\.[0-9]{1,2})?$');
+final _doubleRegex = RegExp(r'^(-?)(0|([1-9][0-9]*))(\.[0-9]{1,})?$');
+final _doubleRankedRegex = RegExp(r'^(-?)(0|([1-9][0-9 ]*))(\.[0-9]{1,})?$');
 
 /// Describes possible decimal separator formats.
 enum DecimalSeparatorFormat {
@@ -143,7 +143,7 @@ enum MoneyFormat {
             precision ?? value.precision ?? value.currency.precision;
 
         if (adjustedPrecision < 0) {
-          throw NegativePrecisionException();
+          throw const NegativePrecisionException();
         }
 
         return value.toDecimal().toStringAsFixed(adjustedPrecision);
