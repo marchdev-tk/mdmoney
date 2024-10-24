@@ -1,5 +1,3 @@
-library mdmoney;
-
 export 'package:decimal/decimal.dart';
 
 export 'src/exceptions.dart';
