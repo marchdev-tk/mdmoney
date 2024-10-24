@@ -207,8 +207,9 @@ enum FiatCurrency {
     }
   }
 
-  static FiatCurrency $default = FiatCurrency.uah;
-  static void setDefaultCurrency(FiatCurrency currency) => $default = currency;
+  static FiatCurrency _default = FiatCurrency.uah;
+  static FiatCurrency get $default => _default;
+  static void setDefaultCurrency(FiatCurrency currency) => _default = currency;
 
   final String code;
   final String number;
