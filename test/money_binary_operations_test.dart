@@ -577,388 +577,381 @@ void main() {
 
   group('multiplication >', () {
     test('0 * 0', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 0.0;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.zero;
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 * 0.1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 * 1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 1.0;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.one;
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 * 1.1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 1.1;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(1.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('1 * 0.1', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(0.1, defaultCurrency);
+      final expected = Amount.fromDouble(0.1);
       expect(actual, expected);
     });
     test('1 * 1.1', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = 1.1;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(1.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(1.1, defaultCurrency);
+      final expected = Amount.fromDouble(1.1);
       expect(actual, expected);
     });
     test('1.1 * 0.1', () {
-      final amount = Money.fromDouble(1.1, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(1.1);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(0.11, defaultCurrency);
+      final expected = Amount.fromDouble(0.11);
       expect(actual, expected);
     });
     test('1.1 * 1.1', () {
-      final amount = Money.fromDouble(1.1, defaultCurrency);
-      const coef = 1.1;
+      final amount = Amount.fromDouble(1.1);
+      final coef = Amount.fromDouble(1.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(1.21, defaultCurrency);
+      final expected = Amount.fromDouble(1.21);
       expect(actual, expected);
     });
     test('0 * -0.1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 * -1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = -1.0;
+      final amount = Amount.fromDouble(0);
+      final coef = -Amount.one;
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 * -1.1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = -1.1;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(-1.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('1 * -0.1', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(-0.1, defaultCurrency);
+      final expected = Amount.fromDouble(-0.1);
       expect(actual, expected);
     });
     test('1 * -1.1', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = -1.1;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(-1.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(-1.1, defaultCurrency);
+      final expected = Amount.fromDouble(-1.1);
       expect(actual, expected);
     });
     test('1.1 * -0.1', () {
-      final amount = Money.fromDouble(1.1, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(1.1);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(-0.11, defaultCurrency);
+      final expected = Amount.fromDouble(-0.11);
       expect(actual, expected);
     });
     test('1.1 * -1.1', () {
-      final amount = Money.fromDouble(1.1, defaultCurrency);
-      const coef = -1.1;
+      final amount = Amount.fromDouble(1.1);
+      final coef = Amount.fromDouble(-1.1);
       final actual = amount * coef;
-      final expected = Money.fromDouble(-1.21, defaultCurrency);
+      final expected = Amount.fromDouble(-1.21);
       expect(actual, expected);
     });
     test('ceil rounding', () {
-      final amount = Money.fromDouble(123.45, defaultCurrency);
-      const coef = 1.24;
+      final amount = Amount.fromDouble(123.45);
+      final coef = Amount.fromDouble(1.24);
       final actual = amount * coef;
-      final expected = Money.fromDouble(153.078, defaultCurrency);
+      final expected = Amount.fromDouble(153.078);
       expect(expected.toDouble(), 153.08);
       expect(actual, expected);
     });
     test('floor rounding', () {
-      final amount = Money.fromDouble(123.45, defaultCurrency);
-      const coef = 0.23;
+      final amount = Amount.fromDouble(123.45);
+      final coef = Amount.fromDouble(0.23);
       final actual = amount * coef;
-      final expected = Money.fromDouble(28.3935, defaultCurrency);
+      final expected = Amount.fromDouble(28.3935);
       expect(expected.toDouble(), 28.39);
       expect(actual, expected);
     });
-    test('Infinite', () {
-      final amount = Money.fromDouble(maxFinite, defaultCurrency);
-      const coef = double.infinity;
-      Money actual() => amount * coef;
-      final expected = throwsA(const TypeMatcher<InfiniteNumberException>());
-      expect(actual, expected);
-    });
     test('a(0) * 11', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 0);
-      const coef = 11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 0);
+      final coef = Amount.fromDouble(11.0);
       final actual = amount * coef;
-      final expected = Money.fromDouble(11, defaultCurrency, precision: 0);
+      final expected = Amount.fromDouble(11, precision: 0);
       expect(actual, expected);
     });
     test('a(4) * 1.1', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 4);
-      const coef = 11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 4);
+      final coef = Amount.fromDouble(11.0);
       final actual = amount * coef;
-      final expected = Money.fromDouble(12.3585, defaultCurrency, precision: 4);
+      final expected = Amount.fromDouble(12.3585, precision: 4);
       expect(actual, expected);
     });
     test('a(0) * -1.1', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 0);
-      const coef = -11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 0);
+      final coef = Amount.fromDouble(-11.0);
       final actual = amount * coef;
-      final expected = Money.fromDouble(-11, defaultCurrency, precision: 0);
+      final expected = Amount.fromDouble(-11, precision: 0);
       expect(actual, expected);
     });
     test('a(4) * -1.1', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 4);
-      const coef = -11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 4);
+      final coef = Amount.fromDouble(-11.0);
       final actual = amount * coef;
-      final expected = Money.fromDouble(-12.3585, defaultCurrency, precision: 4);
+      final expected = Amount.fromDouble(-12.3585, precision: 4);
       expect(actual, expected);
     });
   });
 
   group('division >', () {
     test('0 / 0 (NaN)', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 0.0;
-      Money actual() => amount / coef;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.zero;
+      Amount actual() => amount / coef;
       final expected = throwsA(const TypeMatcher<NotANumberException>());
       expect(actual, expected);
     });
     test('0 / 0.1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 / 2', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 2.0;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 / 1.25', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = 1.25;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(1.25);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0.1 / 0.1', () {
-      final amount = Money.fromDouble(0.1, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(0.1);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(1, defaultCurrency);
+      final expected = Amount.fromDouble(1);
       expect(actual, expected);
     });
     test('0.1 / 2', () {
-      final amount = Money.fromDouble(0.1, defaultCurrency);
-      const coef = 2.0;
+      final amount = Amount.fromDouble(0.1);
+      final coef = Amount.fromDouble(2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.05, defaultCurrency);
+      final expected = Amount.fromDouble(0.05);
       expect(actual, expected);
     });
     test('0.1 / 1.25', () {
-      final amount = Money.fromDouble(0.1, defaultCurrency);
-      const coef = 1.25;
+      final amount = Amount.fromDouble(0.1);
+      final coef = Amount.fromDouble(1.25);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.08, defaultCurrency);
+      final expected = Amount.fromDouble(0.08);
       expect(actual, expected);
     });
     test('1 / 0.1', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(10, defaultCurrency);
+      final expected = Amount.fromDouble(10);
       expect(actual, expected);
     });
     test('1 / 2', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = 2.0;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.5, defaultCurrency);
+      final expected = Amount.fromDouble(0.5);
       expect(actual, expected);
     });
     test('1 / 1.25', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = 1.25;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(1.25);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.8, defaultCurrency);
+      final expected = Amount.fromDouble(0.8);
       expect(actual, expected);
     });
     test('1.25 / 0.1', () {
-      final amount = Money.fromDouble(1.25, defaultCurrency);
-      const coef = 0.1;
+      final amount = Amount.fromDouble(1.25);
+      final coef = Amount.fromDouble(0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(12.5, defaultCurrency);
+      final expected = Amount.fromDouble(12.5);
       expect(actual, expected);
     });
     test('1.1 / 2', () {
-      final amount = Money.fromDouble(1.1, defaultCurrency);
-      const coef = 2.0;
+      final amount = Amount.fromDouble(1.1);
+      final coef = Amount.fromDouble(2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.55, defaultCurrency);
+      final expected = Amount.fromDouble(0.55);
       expect(actual, expected);
     });
     test('4.5 / 1.5', () {
-      final amount = Money.fromDouble(4.5, defaultCurrency);
-      const coef = 1.5;
+      final amount = Amount.fromDouble(4.5);
+      final coef = Amount.fromDouble(1.5);
       final actual = amount / coef;
-      final expected = Money.fromDouble(3, defaultCurrency);
+      final expected = Amount.fromDouble(3);
       expect(actual, expected);
     });
     test('0 / -0.1', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 / -2', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = -2.0;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(-2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0 / -1.25', () {
-      final amount = Money.fromDouble(0, defaultCurrency);
-      const coef = -1.25;
+      final amount = Amount.fromDouble(0);
+      final coef = Amount.fromDouble(-1.25);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency);
+      final expected = Amount.fromDouble(0);
       expect(actual, expected);
     });
     test('0.1 / -0.1', () {
-      final amount = Money.fromDouble(0.1, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(0.1);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-1, defaultCurrency);
+      final expected = Amount.fromDouble(-1);
       expect(actual, expected);
     });
     test('0.1 / -2', () {
-      final amount = Money.fromDouble(0.1, defaultCurrency);
-      const coef = -2.0;
+      final amount = Amount.fromDouble(0.1);
+      final coef = Amount.fromDouble(-2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-0.05, defaultCurrency);
+      final expected = Amount.fromDouble(-0.05);
       expect(actual, expected);
     });
     test('0.1 / -1.25', () {
-      final amount = Money.fromDouble(0.1, defaultCurrency);
-      const coef = -1.25;
+      final amount = Amount.fromDouble(0.1);
+      final coef = Amount.fromDouble(-1.25);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-0.08, defaultCurrency);
+      final expected = Amount.fromDouble(-0.08);
       expect(actual, expected);
     });
     test('1 / -0.1', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-10, defaultCurrency);
+      final expected = Amount.fromDouble(-10);
       expect(actual, expected);
     });
     test('1 / -2', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = -2.0;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(-2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-0.5, defaultCurrency);
+      final expected = Amount.fromDouble(-0.5);
       expect(actual, expected);
     });
     test('1 / -1.25', () {
-      final amount = Money.fromDouble(1, defaultCurrency);
-      const coef = -1.25;
+      final amount = Amount.fromDouble(1);
+      final coef = Amount.fromDouble(-1.25);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-0.8, defaultCurrency);
+      final expected = Amount.fromDouble(-0.8);
       expect(actual, expected);
     });
     test('1.25 / -0.1', () {
-      final amount = Money.fromDouble(1.25, defaultCurrency);
-      const coef = -0.1;
+      final amount = Amount.fromDouble(1.25);
+      final coef = Amount.fromDouble(-0.1);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-12.5, defaultCurrency);
+      final expected = Amount.fromDouble(-12.5);
       expect(actual, expected);
     });
     test('1.1 / -2', () {
-      final amount = Money.fromDouble(1.1, defaultCurrency);
-      const coef = -2.0;
+      final amount = Amount.fromDouble(1.1);
+      final coef = Amount.fromDouble(-2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-0.55, defaultCurrency);
+      final expected = Amount.fromDouble(-0.55);
       expect(actual, expected);
     });
     test('4.5 / -1.5', () {
-      final amount = Money.fromDouble(4.5, defaultCurrency);
-      const coef = -1.5;
+      final amount = Amount.fromDouble(4.5);
+      final coef = Amount.fromDouble(-1.5);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-3, defaultCurrency);
+      final expected = Amount.fromDouble(-3);
       expect(actual, expected);
     });
     test('ceil rounding', () {
-      final amount = Money.fromDouble(4.55, defaultCurrency);
-      const coef = 2.0;
+      final amount = Amount.fromDouble(4.55);
+      final coef = Amount.fromDouble(2.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(2.275, defaultCurrency);
+      final expected = Amount.fromDouble(2.275);
       expect(expected.toDouble(), 2.28);
       expect(actual, expected);
     });
     test('floor rounding', () {
-      final amount = Money.fromDouble(1.45, defaultCurrency);
-      const coef = 3.0;
+      final amount = Amount.fromDouble(1.45);
+      final coef = Amount.fromDouble(3.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.48333333333, defaultCurrency);
+      final expected = Amount.fromDouble(0.48333333333);
       expect(expected.toDouble(), 0.48);
       expect(actual, expected);
     });
-    test('Infinite', () {
-      final amount = Money.fromDouble(maxFinite, defaultCurrency);
-      const coef = double.infinity;
-      Money actual() => amount / coef;
+    test('infinite', () {
+      final amount = Amount.fromDouble(maxFinite);
+      final coef = Amount.fromDouble(double.minPositive);
+      Amount actual() => amount / coef;
       final expected = throwsA(const TypeMatcher<InfiniteNumberException>());
       expect(actual, expected);
     });
     test('a(0) / 11', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 0);
-      const coef = 11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 0);
+      final coef = Amount.fromDouble(11.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency, precision: 0);
+      final expected = Amount.fromDouble(0, precision: 0);
       expect(actual, expected);
     });
     test('a(4) / 11', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 4);
-      const coef = 11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 4);
+      final coef = Amount.fromDouble(11.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0.1021, defaultCurrency, precision: 4);
+      final expected = Amount.fromDouble(0.1021, precision: 4);
       expect(actual, expected);
     });
     test('a(0) / -11', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 0);
-      const coef = -11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 0);
+      final coef = Amount.fromDouble(-11.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(0, defaultCurrency, precision: 0);
+      final expected = Amount.fromDouble(0, precision: 0);
       expect(actual, expected);
     });
     test('a(4) / -11', () {
-      final amount = Money.fromDouble(1.123456, defaultCurrency, precision: 4);
-      const coef = -11.0;
+      final amount = Amount.fromDouble(1.123456, precision: 4);
+      final coef = Amount.fromDouble(-11.0);
       final actual = amount / coef;
-      final expected = Money.fromDouble(-0.1021, defaultCurrency, precision: 4);
+      final expected = Amount.fromDouble(-0.1021, precision: 4);
       expect(actual, expected);
     });
   });
