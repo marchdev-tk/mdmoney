@@ -16,6 +16,14 @@ To begin your work with a money object you need to create it, there are several 
     * `cents`
     * `currency`
     * custom `precision`, if not provided - `currency.precision` will be used instead
+  * `Money.fromBigInt` with following args:
+    * `BigInt` amount
+    * `currency`
+    * custom `precision`, if not provided - `currency.precision` will be used instead
+  * `Money.fromInt` with following args:
+    * `int` amount
+    * `currency`
+    * custom `precision`, if not provided - `currency.precision` will be used instead
   * `Money.fromDecimal` with following args:
     * `Decimal` amount (from `decimal` package)
     * `currency`
@@ -25,20 +33,29 @@ To begin your work with a money object you need to create it, there are several 
     * `currency`
     * custom `precision`, if not provided - `currency.precision` will be used instead
   * `Money.fromString` with following args:
-    * `Stirng`
+    * `String`
     * `currency`, if not specified in a `String`
     * custom `precision`, if not provided - `currency.precision` will be used instead
+  * `Money.fromAmount` with following args:
+    * `Amount` amount
+    * `currency`
+    * custom `precision`, if not provided - will be used either `currency.precision` or `amount.precision` depending on `preferCurrencyPrecision`
+    * `preferCurrencyPrecision`, if not set explicitly - defaults to `false`
 
 Also there are some convenient ways to create an object:
 
-  * `Money.zeroOf` with following args:
+  * `Money.zeroOf` to create the amount with `0` as numerator with following args:
     * `currency`
     * custom `precision`, if not provided - `currency.precision` will be used instead
-  * `Money.oneOf` to create one amount with following args:
+  * `Money.oneOf` to create the amount with `1` as numerator with following args:
     * `currency`
     * custom `precision`, if not provided - `currency.precision` will be used instead
-  * `Money.zero` to create zero amount in default currency (`FiatCurrency.$default`)
-  * `Money.one` to create one amount in default currency (`FiatCurrency.$default`)
+  * `Money.oneIntOf` to create the amount with `1` as integer with following args:
+    * `currency`
+    * custom `precision`, if not provided - `currency.precision` will be used instead
+  * `Money.zero` to create the amount with `0` as numerator in default currency (`FiatCurrency.$default`)
+  * `Money.one` to create the amount with `1` as numerator in default currency (`FiatCurrency.$default`)
+  * `Money.oneInt` to create the amount with `1` as integer in default currency (`FiatCurrency.$default`)
 
 First of all, `Money` object is `comparable` and has all required operators:
   * unary `operator -`
@@ -71,12 +88,13 @@ Regarding what you can do with this object, let's break down following methods/g
   * `fractional` - returns the `fractional` part of the amount in `BigInt` cents
   * `fractionalDecimal` - returns the `fractional` part of the amount in `Decimal`
   * `fractionalDouble` - returns the `fractional` part of the amount in `double`
-  * `toDecimal` - returns the amount in `Decimal`
-  * `toDouble` - returns theamount in `double`
   * `abs` - returns the `absolute` (always positive) amount
   * `round` - returns the `rounded` amount
   * `ceil` - returns the `ceiled` amount (rounded to the next integer)
   * `floor` - returns the `floored` amount (truncating fractional part of the amount)
+  * `toDecimal` - returns the amount in `Decimal`
+  * `toDouble` - returns the amount in `double`
+  * `toAmount` - returns the amount in `Amount`
   * `toString` - return the `String` representation of the amount with lots of customisation options, they are:
     * `DecimalSeparatorFormat` - specifies which decimal separator to use:
       * `point`
@@ -84,7 +102,7 @@ Regarding what you can do with this object, let's break down following methods/g
     * `RankFormat` - specifies rank formatting:
       * `none` (`XXXX`)
       * `space` (`X XXX`)
-    * `MoneyFormat` - specifies amount display formatting:
+    * `AmountFormat` - specifies amount display formatting:
       * `integer` - only integer part (`XXXX`)
       * `flexibleDouble` - fractional parts will not display trailing zeros (`XXXX`/`XXXX.X`/`XXXX.XX`)
       * `fixedDouble` - fractional parts will display full precision, even zeros (`XXXX.XX`)
