@@ -39,8 +39,8 @@ To begin your work with a money object you need to create it, there are several 
   * `Money.fromAmount` with following args:
     * `Amount` amount
     * `currency`
-    * custom `precision`, if not provided - will be used either `currency.precision` or `amount.precision` depending on `preferCurrencyPrecision`
-    * `preferCurrencyPrecision`, if not set explicitly - defaults to `false`
+    * custom `precision`, if not provided - `amount.precision` will be used instead
+    * `preferCurrencyPrecision`, if set to `true` field `precision` is omitted, otherwise either `precision` or `amount.precision` will be used.
 
 Also there are some convenient ways to create an object:
 
