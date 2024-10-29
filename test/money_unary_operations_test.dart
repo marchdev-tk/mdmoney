@@ -1,4 +1,6 @@
-// ignore_for_file: avoid_redundant_argument_values
+// Copyright (c) 2024, the MarchDev Toolkit project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
 
 import 'package:mdmoney/mdmoney.dart';
 import 'package:test/test.dart';
@@ -404,8 +406,79 @@ void main() {
     });
   });
 
-  group('toAmount >', (){
-    // TODO
+  group('toAmount >', () {
+    test('1.5', () {
+      final actual = Money.fromDouble(1.5, defaultCurrency).toAmount();
+      final expected = Amount.fromDouble(1.5);
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromDouble(1, defaultCurrency).toAmount();
+      final expected = Amount.oneIntOf(defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('0.99', () {
+      final actual = Money.fromDouble(0.99, defaultCurrency).toAmount();
+      final expected =
+          Amount.fromDouble(0.99, precision: defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('0.01', () {
+      final actual = Money.fromDouble(0.01, defaultCurrency).toAmount();
+      final expected = Amount.oneOf(defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('0', () {
+      final actual = Money.fromDouble(0, defaultCurrency).toAmount();
+      final expected = Amount.zeroOf(defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('-0.01', () {
+      final actual = Money.fromDouble(-0.01, defaultCurrency).toAmount();
+      final expected = -Amount.oneOf(defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('-0.99', () {
+      final actual = Money.fromDouble(-0.99, defaultCurrency).toAmount();
+      final expected =
+          Amount.fromDouble(-0.99, precision: defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('-1', () {
+      final actual = Money.fromDouble(-1, defaultCurrency).toAmount();
+      final expected = -Amount.oneIntOf(defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('-1.5', () {
+      final actual = Money.fromDouble(-1.5, defaultCurrency).toAmount();
+      final expected =
+          Amount.fromDouble(-1.5, precision: defaultCurrency.precision);
+      expect(actual, expected);
+    });
+    test('positive, precision 0', () {
+      final actual =
+          Money.fromDouble(123.56789, defaultCurrency, precision: 0).toAmount();
+      final expected = Amount.fromDouble(124.0, precision: 0);
+      expect(actual, expected);
+    });
+    test('positive, precision 4', () {
+      final actual =
+          Money.fromDouble(123.56789, defaultCurrency, precision: 4).toAmount();
+      final expected = Amount.fromDouble(123.5679, precision: 4);
+      expect(actual, expected);
+    });
+    test('negative, precision 0', () {
+      final actual = Money.fromDouble(-123.56789, defaultCurrency, precision: 0)
+          .toAmount();
+      final expected = Amount.fromDouble(-124.0, precision: 0);
+      expect(actual, expected);
+    });
+    test('negative, precision 4', () {
+      final actual = Money.fromDouble(-123.56789, defaultCurrency, precision: 4)
+          .toAmount();
+      final expected = Amount.fromDouble(-123.5679, precision: 4);
+      expect(actual, expected);
+    });
   });
 
   group('toString >', () {

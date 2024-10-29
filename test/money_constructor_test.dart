@@ -1032,7 +1032,152 @@ void main() {
   });
 
   group('fromAmount >', () {
-    // TODO
+    test('1', () {
+      final actual =
+          Money.fromAmount(Amount.oneInt, FiatCurrency.$default).value;
+      final expected = BigInt.from(100);
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromAmount(Amount.one, FiatCurrency.$default).value;
+      final expected = BigInt.one;
+      expect(actual, expected);
+    });
+    test('65.4 flooring', () {
+      final actual =
+          Money.fromAmount(Amount.fromDouble(0.654), FiatCurrency.$default)
+              .value;
+      final expected = BigInt.from(65);
+      expect(actual, expected);
+    });
+    test('34.5 ceiling', () {
+      final actual =
+          Money.fromAmount(Amount.fromDouble(0.345), FiatCurrency.$default)
+              .value;
+      final expected = BigInt.from(35);
+      expect(actual, expected);
+    });
+    test('0 value', () {
+      final actual = Money.fromAmount(Amount.zero, FiatCurrency.$default).value;
+      final expected = BigInt.zero;
+      expect(actual, expected);
+    });
+    test('-1', () {
+      final actual = Money.fromAmount(-Amount.one, FiatCurrency.$default).value;
+      final expected = -BigInt.one;
+      expect(actual, expected);
+    });
+    test('-34.5 ceiling', () {
+      final actual =
+          Money.fromAmount(Amount.fromDouble(-0.345), FiatCurrency.$default)
+              .value;
+      final expected = -BigInt.from(35);
+      expect(actual, expected);
+    });
+    test('-65.4 flooring', () {
+      final actual =
+          Money.fromAmount(Amount.fromDouble(-0.654), FiatCurrency.$default)
+              .value;
+      final expected = -BigInt.from(65);
+      expect(actual, expected);
+    });
+    test('-1', () {
+      final actual =
+          Money.fromAmount(-Amount.oneInt, FiatCurrency.$default).value;
+      final expected = -BigInt.from(100);
+      expect(actual, expected);
+    });
+    test('max finite', () {
+      final actual =
+          Money.fromAmount(Amount.fromDouble(maxFinite), FiatCurrency.$default)
+              .value;
+      final expected = maxFiniteNumerator;
+      expect(actual, expected);
+    });
+    test('precision -1', () {
+      Money actual() =>
+          Money.fromAmount(Amount.oneInt, FiatCurrency.$default, precision: -1);
+      final expected = throwsA(const TypeMatcher<NegativePrecisionException>());
+      expect(actual, expected);
+    });
+    test('precision 0 from amount', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 0),
+        FiatCurrency.$default,
+      ).value;
+      final expected = BigInt.zero;
+      expect(actual, expected);
+    });
+    test('precision 4 from amount', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 4),
+        FiatCurrency.$default,
+      ).value;
+      final expected = BigInt.from(1235);
+      expect(actual, expected);
+    });
+    test('precision 12 from amount', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 12),
+        FiatCurrency.$default,
+      ).value;
+      final expected = BigInt.from(123456789000);
+      expect(actual, expected);
+    });
+    test('precision 6 (0 from amount)', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 0),
+        FiatCurrency.$default,
+        precision: 6,
+      ).value;
+      final expected = BigInt.zero;
+      expect(actual, expected);
+    });
+    test('precision 6 (4 from amount)', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 4),
+        FiatCurrency.$default,
+        precision: 6,
+      ).value;
+      final expected = BigInt.from(123500);
+      expect(actual, expected);
+    });
+    test('precision 6 (12 from amount)', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 12),
+        FiatCurrency.$default,
+        precision: 6,
+      ).value;
+      final expected = BigInt.from(123457);
+      expect(actual, expected);
+    });
+    test('precision from currency (0 from amount)', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 0),
+        FiatCurrency.$default,
+        preferCurrencyPrecision: true,
+      ).value;
+      final expected = BigInt.zero;
+      expect(actual, expected);
+    });
+    test('precision from currency (4 from amount)', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 4),
+        FiatCurrency.$default,
+        preferCurrencyPrecision: true,
+      ).value;
+      final expected = BigInt.from(12);
+      expect(actual, expected);
+    });
+    test('precision from currency (12 from amount)', () {
+      final actual = Money.fromAmount(
+        Amount.fromDouble(0.123456789, precision: 12),
+        FiatCurrency.$default,
+        preferCurrencyPrecision: true,
+      ).value;
+      final expected = BigInt.from(12);
+      expect(actual, expected);
+    });
   });
 
   group('static >', () {

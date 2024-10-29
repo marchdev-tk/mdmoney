@@ -191,11 +191,12 @@ class Money extends Amount {
   /// Constructs an instance of the [Money] from [Amount] [amount],
   /// [FiatCurrency] and [precision].
   ///
-  /// If [precision] was not explicitly set - will be used either
-  /// [currency.precision] or [amount.precision] depending on
-  /// [preferCurrencyPrecision].
+  /// If [precision] was not explicitly set - [amount.precision] will be
+  /// used instead.
   ///
-  /// *Note* that [preferCurrencyPrecision] default value is `false`.
+  /// *Note* that if [preferCurrencyPrecision] is set to `true` field
+  /// [precision] is omitted, otherwise either [precision] or [amount.precision]
+  /// will be used.
   factory Money.fromAmount(
     Amount amount,
     FiatCurrency currency, {
@@ -206,10 +207,20 @@ class Money extends Amount {
       throw const NegativePrecisionException();
     }
 
-    final fallbackPrecision =
-        preferCurrencyPrecision ? currency.precision : amount.precision;
-    final adjustedPrecision = precision ?? fallbackPrecision;
-    return Money._(amount.value, currency, precision: adjustedPrecision);
+    if (preferCurrencyPrecision) {
+      return Money.fromDecimal(
+        amount.toDecimal(),
+        currency,
+        precision: currency.precision,
+      );
+    }
+
+    final adjustedPrecision = precision ?? amount.precision;
+    return Money.fromDecimal(
+      amount.toDecimal(),
+      currency,
+      precision: adjustedPrecision,
+    );
   }
 
   /// Amount with `0` as numerator with secific [currency] and optionally
@@ -412,7 +423,7 @@ class Money extends Amount {
 
   /// Gets [Amount] representation of the current amount, truncating any
   /// currency-related part.
-  Amount toAmount() => this;
+  Amount toAmount() => Amount(value, precision: precision);
 
   /// Gets formatted string representation of the current amount, based on the:
   /// - [CurrencyPosition];

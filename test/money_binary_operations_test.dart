@@ -1,4 +1,6 @@
-// ignore_for_file: avoid_redundant_argument_values
+// Copyright (c) 2024, the MarchDev Toolkit project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
 
 import 'package:mdmoney/mdmoney.dart';
 import 'package:test/test.dart';
@@ -531,8 +533,7 @@ void main() {
       final amount2 =
           Money.fromDouble(12.3456789, defaultCurrency, precision: 4);
       final actual = amount1 - amount2;
-      final expected =
-          Money.fromDouble(86.4197, defaultCurrency, precision: 4);
+      final expected = Money.fromDouble(86.4197, defaultCurrency, precision: 4);
       expect(actual, expected);
     });
     test('a1 - -a2, precision 4', () {
@@ -541,7 +542,8 @@ void main() {
       final amount2 =
           Money.fromDouble(-12.3456789, defaultCurrency, precision: 4);
       final actual = amount1 - amount2;
-      final expected = Money.fromDouble(111.1111, defaultCurrency, precision: 4);
+      final expected =
+          Money.fromDouble(111.1111, defaultCurrency, precision: 4);
       expect(actual, expected);
     });
     test('-a1 - -a2, precision 4', () {
@@ -569,8 +571,7 @@ void main() {
       final amount2 =
           Money.fromDouble(12.3456789, defaultCurrency, precision: 2);
       final actual = amount1 - amount2;
-      final expected =
-          Money.fromDouble(86.4154, defaultCurrency, precision: 4);
+      final expected = Money.fromDouble(86.4154, defaultCurrency, precision: 4);
       expect(actual, expected);
     });
   });
@@ -985,7 +986,7 @@ void main() {
       final expected = throwsA(const TypeMatcher<CurrencyMismatchException>());
       expect(actual, expected);
     });
-    
+
     test('less, precision 4', () {
       final amount1 = Money.fromDouble(1.1234, defaultCurrency, precision: 4);
       final amount2 = Money.fromDouble(2.2345, defaultCurrency, precision: 4);
