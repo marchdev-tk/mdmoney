@@ -23,9 +23,6 @@ jobs:
     - name: 'Get Packages'
       run: dart pub get
 
-    - name: 'Run tests'
-      run: dart pub run test
-
     - name: Activate coverage package
       run: dart pub global activate coverage
 
