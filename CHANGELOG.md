@@ -1,16 +1,20 @@
 # Changelog
 
+## 1.1.1
+
+* Updated tests.
+
 ## 1.1.0
 
-* Extended `Money` from `Amount` (`mdamount` package)
+* Extended `Money` from `Amount` (`mdamount` package).
 * Added new construction options:
   * `Money.fromBigInt`
   * `Money.fromInt`
   * `Money.fromAmount`
   * `Money.oneIntOf`
   * `Money.oneInt`
-* Added `Money.toAmount` conversion method
-* Updated tests
+* Added `Money.toAmount` conversion method.
+* Updated tests.
 
 ## 1.0.1
 
