@@ -270,6 +270,30 @@ class Money extends Amount {
   @override
   int get precision => super.precision;
 
+  /// Whether this money is equals to zero or not.
+  @override
+  bool get isZero => this == Money.zeroOf(currency, precision: precision);
+
+  /// Whether this money is greater than zero or not.
+  @override
+  bool get isGreaterThanZero =>
+      this > Money.zeroOf(currency, precision: precision);
+
+  /// Whether this money is greater than or equals to zero or not.
+  @override
+  bool get isGreaterThanOrEqualZero =>
+      this >= Money.zeroOf(currency, precision: precision);
+
+  /// Whether this money is less than zero or not.
+  @override
+  bool get isLessThanZero =>
+      this < Money.zeroOf(currency, precision: precision);
+
+  /// Whether this money is less than or equals to zero or not.
+  @override
+  bool get isLessThanOrEqualZero =>
+      this <= Money.zeroOf(currency, precision: precision);
+
   @override
   Money abs() {
     if (cents.isNegative) {

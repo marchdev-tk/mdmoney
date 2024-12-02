@@ -8,6 +8,97 @@ import 'package:test/test.dart';
 import 'constants.dart';
 
 void main() {
+  group('isZero >', () {
+    test('-1', () {
+      final actual = Money.fromInt(-1, defaultCurrency).isZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+    test('0', () {
+      final actual = Money.fromInt(0, defaultCurrency).isZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromInt(1, defaultCurrency).isZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+  });
+
+  group('isGreaterThanZero >', () {
+    test('-1', () {
+      final actual = Money.fromInt(-1, defaultCurrency).isGreaterThanZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+    test('0', () {
+      final actual = Money.fromInt(0, defaultCurrency).isGreaterThanZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromInt(1, defaultCurrency).isGreaterThanZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+  });
+
+  group('isGreaterThanOrEqualZero >', () {
+    test('-1', () {
+      final actual =
+          Money.fromInt(-1, defaultCurrency).isGreaterThanOrEqualZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+    test('0', () {
+      final actual = Money.fromInt(0, defaultCurrency).isGreaterThanOrEqualZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromInt(1, defaultCurrency).isGreaterThanOrEqualZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+  });
+
+  group('isLessThanZero >', () {
+    test('-1', () {
+      final actual = Money.fromInt(-1, defaultCurrency).isLessThanZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+    test('0', () {
+      final actual = Money.fromInt(0, defaultCurrency).isLessThanZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromInt(1, defaultCurrency).isLessThanZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+  });
+
+  group('isLessThanOrEqualZero >', () {
+    test('-1', () {
+      final actual = Money.fromInt(-1, defaultCurrency).isLessThanOrEqualZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+    test('0', () {
+      final actual = Money.fromInt(0, defaultCurrency).isLessThanOrEqualZero;
+      const expected = true;
+      expect(actual, expected);
+    });
+    test('1', () {
+      final actual = Money.fromInt(1, defaultCurrency).isLessThanOrEqualZero;
+      const expected = false;
+      expect(actual, expected);
+    });
+  });
+
   group('abs >', () {
     test('1.5', () {
       final actual = Money.fromDouble(1.5, defaultCurrency).abs();
