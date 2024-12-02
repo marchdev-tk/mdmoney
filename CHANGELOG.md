@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.2
+
+* Fixed several getters:
+  * `isZero`
+  * `isGreaterThanZero`
+  * `isGreaterThanOrEqualZero`
+  * `isLessThanZero`
+  * `isLessThanOrEqualZero`
+
 ## 1.1.1
 
 * Updated tests.
