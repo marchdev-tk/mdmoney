@@ -497,6 +497,17 @@ void main() {
     });
   });
 
+  group('hashCode >', () {
+    test('value 1.11, precision 2', () {
+      final money = Money.fromDouble(1.11, FiatCurrency.$default, precision: 2);
+      final actual = money.hashCode;
+      final expected = money.value.hashCode ^
+          money.precision.hashCode ^
+          money.currency.hashCode;
+      expect(actual, expected);
+    });
+  });
+
   group('toAmount >', () {
     test('1.5', () {
       final actual = Money.fromDouble(1.5, defaultCurrency).toAmount();
@@ -573,7 +584,7 @@ void main() {
   });
 
   group('toString >', () {
-    group('MF-RF-DSF >', () {
+    group('AF-RF-DSF >', () {
       test('fixedDouble/none/point', () {
         final actual = Money.fromDouble(1000.1, defaultCurrency).toString(
           currencyPosition: CurrencyPosition.end,

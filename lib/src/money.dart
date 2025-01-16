@@ -18,15 +18,8 @@ class Money extends Amount {
   /// Constructs an instance of the [Money] from [BigInt] cents, [FiatCurrency]
   /// and [precision].
   ///
-  /// If [precision] was not explicitly set or set to a negative
-  /// value - [currency.precision] will be used instead.
-  ///
   /// Internal contructor.
-  Money._(super.value, this.currency, {int? precision})
-      : super(
-            precision: precision == null || precision < 0
-                ? currency.precision
-                : precision);
+  Money._(super.value, this.currency, {required super.precision});
 
   /// Constructs an instance of the [Money] from [int] [cents], [FiatCurrency]
   /// and [precision].
@@ -465,11 +458,13 @@ class Money extends Amount {
     RankFormat rankFormat = RankFormat.space,
     DecimalSeparatorFormat decimalSeparatorFormat =
         DecimalSeparatorFormat.point,
+    int? precision,
   }) {
     final moneyFmt = super.toString(
       amountFormat: amountFormat,
       rankFormat: rankFormat,
       decimalSeparatorFormat: decimalSeparatorFormat,
+      precision: precision,
     );
     final currencyFmt = currencyFormat.format(currency);
 
