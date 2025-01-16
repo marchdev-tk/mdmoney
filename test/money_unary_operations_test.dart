@@ -1,4 +1,4 @@
-// Copyright (c) 2024, the MarchDev Toolkit project authors. Please see the AUTHORS file
+// Copyright (c) 2025, the MarchDev Toolkit project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -499,7 +499,7 @@ void main() {
 
   group('hashCode >', () {
     test('value 1.11, precision 2', () {
-      final money = Money.fromDouble(1.11, FiatCurrency.$default, precision: 2);
+      final money = Money.fromDouble(1.11, defaultCurrency, precision: 2);
       final actual = money.hashCode;
       final expected = money.value.hashCode ^
           money.precision.hashCode ^
@@ -630,6 +630,24 @@ void main() {
         expect(actual, expected);
       });
       test('fixedDouble precision 0', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.fixedDouble, precision: 0);
+        final expected = '100${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('fixedDouble precision 4', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.fixedDouble, precision: 4);
+        final expected = '100.1200${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('fixedDouble precision 8', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.fixedDouble, precision: 8);
+        final expected = '100.12000000${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('fixedDouble Money.precision 0', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -642,7 +660,7 @@ void main() {
         final expected = '100${defaultCurrency.icon}';
         expect(actual, expected);
       });
-      test('fixedDouble precision 4', () {
+      test('fixedDouble Money.precision 4', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -655,7 +673,7 @@ void main() {
         final expected = '100.1235${defaultCurrency.icon}';
         expect(actual, expected);
       });
-      test('fixedDouble precision 8', () {
+      test('fixedDouble Money.precision 8', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -666,6 +684,34 @@ void main() {
           amountFormat: AmountFormat.fixedDouble,
         );
         final expected = '100.12345600${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('fixedDouble Money.precision 4, precision 2', () {
+        final actual = Money.fromDouble(
+          100.123456,
+          defaultCurrency,
+          precision: 4,
+        ).toString(
+          amountFormat: AmountFormat.fixedDouble,
+          currencyPosition: CurrencyPosition.end,
+          currencyFormat: FiatCurrencyFormat.icon,
+          precision: 2,
+        );
+        final expected = '100.12${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('fixedDouble Money.precision 2, precision 4', () {
+        final actual = Money.fromDouble(
+          100.123456,
+          defaultCurrency,
+          precision: 2,
+        ).toString(
+          amountFormat: AmountFormat.fixedDouble,
+          currencyPosition: CurrencyPosition.end,
+          currencyFormat: FiatCurrencyFormat.icon,
+          precision: 4,
+        );
+        final expected = '100.1200${defaultCurrency.icon}';
         expect(actual, expected);
       });
 
@@ -714,6 +760,24 @@ void main() {
         expect(actual, expected);
       });
       test('integer precision 0', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.integer, precision: 0);
+        final expected = '100${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('integer precision 4', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.integer, precision: 4);
+        final expected = '100${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('integer precision 8', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.integer, precision: 8);
+        final expected = '100${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('integer Money.precision 0', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -726,7 +790,7 @@ void main() {
         final expected = '100${defaultCurrency.icon}';
         expect(actual, expected);
       });
-      test('integer precision 4', () {
+      test('integer Money.precision 4', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -739,7 +803,7 @@ void main() {
         final expected = '100${defaultCurrency.icon}';
         expect(actual, expected);
       });
-      test('integer precision 8', () {
+      test('integer Money.precision 8', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -748,6 +812,34 @@ void main() {
           currencyPosition: CurrencyPosition.end,
           currencyFormat: FiatCurrencyFormat.icon,
           amountFormat: AmountFormat.integer,
+        );
+        final expected = '100${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('integer Money.precision 4, precision 2', () {
+        final actual = Money.fromDouble(
+          100.123456,
+          defaultCurrency,
+          precision: 4,
+        ).toString(
+          amountFormat: AmountFormat.integer,
+          currencyPosition: CurrencyPosition.end,
+          currencyFormat: FiatCurrencyFormat.icon,
+          precision: 2,
+        );
+        final expected = '100${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('integer Money.precision 2, precision 4', () {
+        final actual = Money.fromDouble(
+          100.123456,
+          defaultCurrency,
+          precision: 2,
+        ).toString(
+          amountFormat: AmountFormat.integer,
+          currencyPosition: CurrencyPosition.end,
+          currencyFormat: FiatCurrencyFormat.icon,
+          precision: 4,
         );
         final expected = '100${defaultCurrency.icon}';
         expect(actual, expected);
@@ -798,6 +890,24 @@ void main() {
         expect(actual, expected);
       });
       test('flexibleDouble precision 0', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.flexibleDouble, precision: 0);
+        final expected = '100.12${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble precision 4', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.flexibleDouble, precision: 4);
+        final expected = '100.1200${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble precision 8', () {
+        final actual = Money.fromDouble(100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.flexibleDouble, precision: 8);
+        final expected = '100.12000000${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble Money.precision 0', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -810,7 +920,7 @@ void main() {
         final expected = '100${defaultCurrency.icon}';
         expect(actual, expected);
       });
-      test('flexibleDouble precision 4', () {
+      test('flexibleDouble Money.precision 4', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -823,7 +933,7 @@ void main() {
         final expected = '100.1235${defaultCurrency.icon}';
         expect(actual, expected);
       });
-      test('flexibleDouble precision 8', () {
+      test('flexibleDouble Money.precision 8', () {
         final actual = Money.fromDouble(
           100.123456,
           defaultCurrency,
@@ -834,6 +944,34 @@ void main() {
           amountFormat: AmountFormat.flexibleDouble,
         );
         final expected = '100.123456${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble Money.precision 4, precision 2', () {
+        final actual = Money.fromDouble(
+          100.123456,
+          defaultCurrency,
+          precision: 4,
+        ).toString(
+          amountFormat: AmountFormat.flexibleDouble,
+          currencyPosition: CurrencyPosition.end,
+          currencyFormat: FiatCurrencyFormat.icon,
+          precision: 2,
+        );
+        final expected = '100.1235${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble Money.precision 2, precision 4', () {
+        final actual = Money.fromDouble(
+          100.123456,
+          defaultCurrency,
+          precision: 2,
+        ).toString(
+          amountFormat: AmountFormat.flexibleDouble,
+          currencyPosition: CurrencyPosition.end,
+          currencyFormat: FiatCurrencyFormat.icon,
+          precision: 4,
+        );
+        final expected = '100.1200${defaultCurrency.icon}';
         expect(actual, expected);
       });
     });
