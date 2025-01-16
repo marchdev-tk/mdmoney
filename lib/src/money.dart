@@ -447,9 +447,20 @@ class Money extends Amount {
   /// - [FiatCurrencyFormat];
   /// - [MoneyFormat];
   /// - [RankFormat];
-  /// - [DecimalSeparatorFormat].
+  /// - [DecimalSeparatorFormat];
+  /// - [precision].
   ///
-  /// Defaults are [FiatCurrencyFormat.icon] and [AmountFormat.fixedDouble].
+  /// Defaults are [CurrencyPosition.end], [FiatCurrencyFormat.icon],
+  /// [AmountFormat.fixedDouble], [RankFormat.space] and
+  /// [DecimalSeparatorFormat.point].
+  ///
+  /// If [precision] is set, this method will behave differently based on
+  /// [AmountFormat]:
+  /// - [AmountFormat.integer] - [precision] is omitted;
+  /// - [AmountFormat.fixedDouble] - [precision] will be used as an override to
+  /// [Money.precision];
+  /// - [AmountFormat.flexibleDouble] - [precision] will be used only if length
+  /// of fractionals will be less than [precision].
   @override
   String toString({
     CurrencyPosition currencyPosition = CurrencyPosition.end,

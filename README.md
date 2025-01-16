@@ -116,6 +116,10 @@ Regarding what you can do with this object, let's break down following methods/g
       * `end`
       * `endSpaced`
       * `decimalSeparator`
+    * `precision` - if set, this method will behave differently based on `AmountFormat`:
+      * `integer` - `precision` is omitted
+      * `fixedDouble` - `precision` will be used as an override to `Amount.precision`
+      * `flexibleDouble` - `precision` will be used only if length of fractionals will be less than `precision`
 
 ## Examples
 
