@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.3
+
+* Added to `Money.toString` precision.
+* Updated tests.
+
 ## 1.1.2
 
 * Fixed several getters:
