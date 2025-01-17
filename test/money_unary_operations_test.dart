@@ -889,6 +889,24 @@ void main() {
         final expected = '1 000,1${defaultCurrency.icon}';
         expect(actual, expected);
       });
+      test('flexibleDouble precision 0 negative', () {
+        final actual = Money.fromDouble(-100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.flexibleDouble, precision: 0);
+        final expected = '-100.12${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble precision 4 negative', () {
+        final actual = Money.fromDouble(-100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.flexibleDouble, precision: 4);
+        final expected = '-100.1200${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
+      test('flexibleDouble precision 8 negative', () {
+        final actual = Money.fromDouble(-100.123456, defaultCurrency)
+            .toString(amountFormat: AmountFormat.flexibleDouble, precision: 8);
+        final expected = '-100.12000000${defaultCurrency.icon}';
+        expect(actual, expected);
+      });
       test('flexibleDouble precision 0', () {
         final actual = Money.fromDouble(100.123456, defaultCurrency)
             .toString(amountFormat: AmountFormat.flexibleDouble, precision: 0);
