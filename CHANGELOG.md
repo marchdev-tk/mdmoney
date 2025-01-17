@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4
+
+* Updated `mdamount` dependency.
+* Updated tests.
+
 ## 1.1.3
 
 * Added to `Money.toString` precision.
