@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5
+
+* Updated `mdamount` dependency.
+
 ## 1.1.4
 
 * Updated `mdamount` dependency.
