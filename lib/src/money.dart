@@ -461,6 +461,10 @@ class Money extends Amount {
   /// [Money.precision];
   /// - [AmountFormat.flexibleDouble] - [precision] will be used only if length
   /// of fractionals will be less than [precision].
+  /// 
+  /// *Please note*, that max precision is `15`, everything that is beyond this
+  /// precision will be trimmed due to Decimal's internal inability to work with
+  /// such precisions.
   @override
   String toString({
     CurrencyPosition currencyPosition = CurrencyPosition.end,

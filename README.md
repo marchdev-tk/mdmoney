@@ -121,6 +121,10 @@ Regarding what you can do with this object, let's break down following methods/g
       * `fixedDouble` - `precision` will be used as an override to `Amount.precision`
       * `flexibleDouble` - `precision` will be used only if length of fractionals will be less than `precision`
 
+### Known limitations
+
+  * Max precision is `15`, everything that is beyond this precision will be trimmed due to Decimal's internal inability to work with such precisions.
+
 ## Examples
 
 To see usage example navigate to the [Example](example/README.md) section.
