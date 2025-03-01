@@ -6,6 +6,12 @@ import 'package:mdmoney/mdmoney.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('AED', () {
+    final actual = FiatCurrency.parse('AED');
+    const expected = FiatCurrency.aed;
+    expect(actual, expected);
+  });
+
   group('default >', () {
     test('get default', () {
       final actual = FiatCurrency.$default;
